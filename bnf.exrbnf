@@ -1,5 +1,5 @@
-atom : <QuotedStr>  { Terminal(eval(*$0)) }
-     | <Term>       { Terminal(*$0) }
+atom : <QuotedStr>  { Terminal(eval(*$0), True) }
+     | <Term>       { Terminal(*$0, False) }
      | <Ident>      { NonTerminal(*$0) }
      | '(' alt ')' { $1 }
      | '[' alt ']' { Optional($1) }

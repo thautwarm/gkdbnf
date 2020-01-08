@@ -5,6 +5,7 @@ import typing
 @dataclass
 class Terminal:
     name: str
+    quoted: bool
 
 
 @dataclass

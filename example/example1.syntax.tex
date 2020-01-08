@@ -1,0 +1,78 @@
+\begin{grammar}
+    <Expr> : <JuliaExpr>
+
+    <Name> : \textbf{ident}
+    \alt \textbf{ident}
+    \alt '(' \textbf{ident} '::' <JuliaType> ')'
+
+    <Arg> : <Name> [ '=' <Expr> ]
+
+    <PosArgs> : [ <PosArgs> ',' ] <Arg>
+
+    <Vararg> : \textbf{ident} '...'
+
+    <FunArgs> : '(' [ <PosArgs> ] <Vararg> [ ';' [ <PosArgs> ] <Vararg> ] ')'
+
+    <Fun> : 'function' <Name> <FunArgs> 'where' '\\{' <Symbols> '\\}' [ <Stmts> ] 'end'
+
+    <Symbols> : [ <Symbols> ',' ] \textbf{ident}
+
+    <Stmt> : <IfStmt>
+    \alt <IfStmt>
+    \alt <WhileStmt>
+    \alt <ForStmt>
+    \alt <InstrStmt>
+    \alt <RevStmt>
+    \alt <@anc> <Stmt>
+    \alt <@routine> <Stmt>
+    \alt <@safe> <Stmt>
+    \alt <CallStmt>
+
+    <Stmts> : [ <Stmts> ] <Stmt>
+
+    <RevCond> : '(' <Expr> ',' <Expr> ')'
+
+    <IfStmt> : 'if' <RevCond> [ <Stmts> ] [ 'else' <Stmts> ] 'end'
+
+    <WhileStmt> : 'while' <RevCond> [ <Stmts> ] 'end'
+
+    <Range> : <Expr> ':' <Expr> [ ':' <Expr> ]
+
+    <ForStmt> : 'for' \textbf{ident} '=' <Range> [ <Stmts> ] 'end'
+
+    <CallStmt> : \textbf{ident} '(' [ <DataViews> ] ')'
+
+    <Constant> : <num>
+    \alt <num>
+    \alt '$\\pi$'
+
+    <InstrBinOp> : '+=' \alt '-=' \alt '$\\veebar$='
+
+    <InstrTrailer> : [ '.' ] '(' [ <DataViews> ] ')'
+
+    <InstrStmt> : \textbf{ident} <InstrBinOp> \textbf{ident} [ <InstrTrailer> ]
+
+    <RevStmt> : '~' '(' [ <Stmts> ] ')'
+
+    <RoutineArg> : \textbf{ident} [ 'begin' [ <Stmts> ] 'end' ]
+
+    <@routine> : '@routine' <RoutineArg>
+
+    <AncArg> : \textbf{ident} '=' <Expr>
+
+    <@anc> : '@anc' <AncArg>
+    \alt '@anc' <AncArg>
+    \alt '@deanc' <AncArg>
+
+    <@safe> : '@safe' <Expr>
+
+    <DataViews> : [ <DataViews> ',' ] <DataView>
+
+    <DataView> : <DataView> '[' <Expr> ']'
+    \alt <DataView> '[' <Expr> ']'
+    \alt <DataView> '.' \textbf{ident}
+    \alt \textbf{ident} '(' <DataView> ')'
+    \alt <Constant>
+    \alt \textbf{ident}
+
+\end{grammar}

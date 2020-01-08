@@ -1,4 +1,4 @@
-expr : JuliaExpr;
+Expr : JuliaExpr;
 
 Name : <ident> | '(' <ident> '::' JuliaType ')';
 
