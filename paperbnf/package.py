@@ -17,7 +17,7 @@ class Backnaur:
             hd, *tl = p.rule.elts
             io.write(r'    \bnfprod{{{}}}{{{}}}\\'.format(
                 p.name, self.rule(hd)))
-            for each in p.rule.elts:
+            for each in tl:
                 io.write('\n')
                 io.write(r'    \bnfmore{{\bnfor {}}}\\'.format(
                     self.rule(each)))
@@ -29,7 +29,7 @@ class Backnaur:
         def apply(t: terms.Term):
             base = self.rule(t)
             if isinstance(t, c):
-                base = r'\bnftd{(} ' + base + r'\bnftd{)}'
+                base = r'\bnfts{(} ' + base + r'\bnfts{)}'
             return base
 
         return apply
@@ -40,7 +40,7 @@ class Backnaur:
             if not t.quoted:
                 n = n[1:-1]
             n = n.replace('}', r'\}').replace('{', r'\{')
-            return r"\bnfts{{{}}}".format(n)
+            return r"\bnftd{{{}}}".format(n)
         if isinstance(t, terms.NonTerminal):
             return r"\bnfpn{{{}}}".format(t.name)
         if isinstance(t, terms.Alt):
@@ -49,11 +49,11 @@ class Backnaur:
             return r' \bnfsp '.join(
                 map(self.nest_rule(terms.Alt, terms.Seq), t.elts))
         if isinstance(t, terms.Eps):
-            return r'\bnfes'
+            return r'\bnfsp \bnfes'
         if isinstance(t, terms.Skip):
             return r'\bnksk'
         if isinstance(t, terms.Optional):
-            return r'\bnftd{[} ' + self.rule(t.term) + r'\bnftd{]}'
+            return r'\bnfts{[} ' + self.rule(t.term) + r'\bnfts{]}'
         raise TypeError(type(t))
 
     @classmethod
