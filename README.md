@@ -15,7 +15,7 @@ paperbnf <filename>
 sh> cat a.rbnf
 a ::= a b;
 b ::=  [b] c
-      | a 'd'
+      | a 'd' <e>
       | '$\\alpha$'
       ;
 
