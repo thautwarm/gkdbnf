@@ -21,7 +21,7 @@ setup(
     author_email='twshere@outlook.com',
     packages=find_packages(),
     entry_points={"console_scripts": ['paperbnf=paperbnf.cli:main']},
-    install_requires=["argser"],
+    install_requires=["argser", 'rbnf-rts'],
     platforms="any",
     classifiers=[
         "Programming Language :: Python :: 3.7",
