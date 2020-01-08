@@ -1,18 +1,18 @@
 expr : JuliaExpr;
 
-Name : ident | '(' ident '::' JuliaType ')';
+Name : <ident> | '(' <ident> '::' JuliaType ')';
 
 Arg : Name ['=' Expr];
 
 PosArgs : [PosArgs ','] Arg;
 
-Vararg : ident '...';
+Vararg : <ident> '...';
 
 FunArgs : '(' [PosArgs] Vararg [';' [PosArgs] Vararg ] ')';
 
 Fun : 'function' Name FunArgs 'where' '{' Symbols '}' [Stmts] 'end';
 
-Symbols : [Symbols ','] ident;
+Symbols : [Symbols ','] <ident>;
 
 Stmt : IfStmt
      | WhileStmt
@@ -27,7 +27,7 @@ Stmt : IfStmt
 
 Stmts : [Stmts] Stmt;
 
-RevCond : '(' Expr, Expr ')';
+RevCond : '(' Expr ',' Expr ')';
 
 IfStmt : 'if' RevCond [Stmts] ['else' Stmts] 'end';
 
@@ -35,25 +35,25 @@ WhileStmt : 'while' RevCond [Stmts] 'end';
 
 Range : Expr ':' Expr [':' Expr];
 
-ForStmt : 'for' ident '=' Range [Stmts] 'end';
+ForStmt : 'for' <ident> '=' Range [Stmts] 'end';
 
-CallStmt : ident '(' [Dataviews] ')';
+CallStmt : <ident> '(' [DataViews] ')';
 
-Constant : num | '(*$\pi$*)';
+Constant : num | '$\pi$';
 
-InstrBinOp : '+=' | '-=' | '(*$\veebar$*)=';
+InstrBinOp : '+=' | '-=' | '$\\veebar$=';
 
-InstrTrailer : ['.'] '(' [Dataviews] ')';
+InstrTrailer : ['.'] '(' [DataViews] ')';
 
-InstrStmt : ident InstrBinOp ident [InstrTrailer];
+InstrStmt : <ident> InstrBinOp <ident> [InstrTrailer];
 
 RevStmt : '~' '(' [Stmts] ')';
 
-RoutineArg : ident ['begin' [Stmts] 'end'];
+RoutineArg : <ident> ['begin' [Stmts] 'end'];
 
 @routine : '@routine' RoutineArg;
 
-AncArg : ident '=' Expr;
+AncArg : <ident> '=' Expr;
 
 @anc : '@anc' AncArg
      | '@deanc' AncArg
@@ -61,10 +61,12 @@ AncArg : ident '=' Expr;
 
 @safe : '@safe' Expr;
 
-Dataviews : [Dataviews ','] Dataview;
+DataViews : [DataViews ','] DataView;
 
-Dataview : Dataview '[' Expr ']'
-         |   ident {'.' ident}*
-         |   ident '(' Dataview ')'
-         |   Constant
+
+DataView : DataView '[' Expr ']'
+         | DataView '.' <ident>
+         | <ident> '(' DataView ')'
+         | Constant
+         | <ident>
          ;

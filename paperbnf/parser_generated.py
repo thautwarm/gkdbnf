@@ -4,7 +4,7 @@ from rbnf_rts.rbnf_linker import link
 from rbnf_rts.utils import ImmutableMap
 from rbnf_rts.lexical import *
 __all__ = ['lexicals', 'run_lexer', 'mk_parser']
-(lexicals, run_lexer) = lexer(r(WS='\\s+'), r(QuotedStr='"([^\\\\"]+|\\\\.)*?"|\'([^\\\\\']+|\\\\.)*?\''), r(Ident='[a-zA-Z_\\u4e00-\\u9fa5][a-zA-Z0-9_\\u4e00-\\u9fa5]*'), r(Term='<.*>'), l['|'], l[']'], l['['], l[';'], l['::='], l[':'], l['0'], l['...'], l[')'], l['('], ignores=['WS'], reserved_map=ImmutableMap.from_dict({'(': 'quote (', ')': 'quote )', '[': 'quote [', ']': 'quote ]', '0': 'quote 0', '...': 'quote ...', '|': 'quote |', ':': 'quote :', '::=': 'quote ::=', ';': 'quote ;'}), numbering={'BOF': 0, 'EOF': 1, 'quote (': 2, 'quote )': 3, 'quote [': 4, 'quote ]': 5, 'quote 0': 6, 'quote ...': 7, 'quote |': 8, 'quote :': 9, 'quote ::=': 10, 'quote ;': 11, 'WS': 12, 'QuotedStr': 13, 'Ident': 14, 'Term': 15})
+(lexicals, run_lexer) = lexer(r(WS='\\s+'), r(QuotedStr='"([^\\\\"]+|\\\\.)*?"|\'([^\\\\\']+|\\\\.)*?\''), r(Ident='[@a-zA-Z_\\u4e00-\\u9fa5][@a-zA-Z0-9_\\u4e00-\\u9fa5]*'), r(Term='<.*>'), l['|'], l[']'], l['['], l[';'], l['::='], l[':'], l['0'], l['...'], l[')'], l['('], ignores=['WS'], reserved_map=ImmutableMap.from_dict({'(': 'quote (', ')': 'quote )', '[': 'quote [', ']': 'quote ]', '0': 'quote 0', '...': 'quote ...', '|': 'quote |', ':': 'quote :', '::=': 'quote ::=', ';': 'quote ;'}), numbering={'BOF': 0, 'EOF': 1, 'quote (': 2, 'quote )': 3, 'quote [': 4, 'quote ]': 5, 'quote 0': 6, 'quote ...': 7, 'quote |': 8, 'quote :': 9, 'quote ::=': 10, 'quote ;': 11, 'WS': 12, 'QuotedStr': 13, 'Ident': 14, 'Term': 15})
 
 
 
