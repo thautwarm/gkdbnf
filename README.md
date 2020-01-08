@@ -33,12 +33,11 @@ produces
 
 ```latex
 \begin{bnf*}
-    \bnfprod{a}{\bnfpn{a} \bnfsp \bnfpn{b}}
-    \bnfprod{b}{\bnftd{[} \bnfpn{b}\bnftd{]} \bnfsp \bnfpn{c}}\\
-    \bnfmore{\bnfor \bnftd{[} \bnfpn{b}\bnftd{]} \bnfsp \bnfpn{c}}\\
-    \bnfmore{\bnfor \bnfpn{a} \bnfsp \bnfts{d} \bnfsp \bnfts{<e>}}\\
-    \bnfmore{\bnfor \bnfts{$\alpha$}}\\
-    \bnfprod{op}{\bnfts{+} \bnfor \bnfts{-} \bnfor \bnfts{*}}
+    \bnfprod{a}{\bnfpn{a} \bnfsp \bnfpn{b}}\\
+    \bnfprod{b}{\bnfts{[} \bnfpn{b}\bnfts{]} \bnfsp \bnfpn{c}}\\
+    \bnfmore{\bnfor \bnfpn{a} \bnfsp \bnftd{d} \bnfsp \bnftd{e}}\\
+    \bnfmore{\bnfor \bnftd{$\alpha$}}\\
+    \bnfprod{op}{\bnftd{+} \bnfor \bnftd{-} \bnfor \bnftd{*}}\\
 \end{bnf*}
 ``` 
  
