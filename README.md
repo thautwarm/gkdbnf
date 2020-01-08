@@ -1,5 +1,7 @@
 # paperbnf
 
+Generating beautiful BNF(supporting optional `[ ... ]`) from RBNF syntax, thus the BNF file can generate parsers as well.  
+
 ## Installation
 
 `pip install paperbnf`

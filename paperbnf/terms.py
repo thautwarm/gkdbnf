@@ -34,7 +34,6 @@ class Seq:
 class Alt:
     elts: typing.List['Term']
 
-
 @dataclass
 class Prod:
     name: str
