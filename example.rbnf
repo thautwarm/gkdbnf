@@ -1,0 +1,70 @@
+expr : JuliaExpr;
+
+Name : ident | '(' ident '::' JuliaType ')';
+
+Arg : Name ['=' Expr];
+
+PosArgs : [PosArgs ','] Arg;
+
+Vararg : ident '...';
+
+FunArgs : '(' [PosArgs] Vararg [';' [PosArgs] Vararg ] ')';
+
+Fun : 'function' Name FunArgs 'where' '{' Symbols '}' [Stmts] 'end';
+
+Symbols : [Symbols ','] ident;
+
+Stmt : IfStmt
+     | WhileStmt
+     | ForStmt
+     | InstrStmt
+     | RevStmt
+     | @anc Stmt
+     | @routine Stmt
+     | @safe Stmt
+     | CallStmt
+     ;
+
+Stmts : [Stmts] Stmt;
+
+RevCond : '(' Expr, Expr ')';
+
+IfStmt : 'if' RevCond [Stmts] ['else' Stmts] 'end';
+
+WhileStmt : 'while' RevCond [Stmts] 'end';
+
+Range : Expr ':' Expr [':' Expr];
+
+ForStmt : 'for' ident '=' Range [Stmts] 'end';
+
+CallStmt : ident '(' [Dataviews] ')';
+
+Constant : num | '(*$\pi$*)';
+
+InstrBinOp : '+=' | '-=' | '(*$\veebar$*)=';
+
+InstrTrailer : ['.'] '(' [Dataviews] ')';
+
+InstrStmt : ident InstrBinOp ident [InstrTrailer];
+
+RevStmt : '~' '(' [Stmts] ')';
+
+RoutineArg : ident ['begin' [Stmts] 'end'];
+
+@routine : '@routine' RoutineArg;
+
+AncArg : ident '=' Expr;
+
+@anc : '@anc' AncArg
+     | '@deanc' AncArg
+     ;
+
+@safe : '@safe' Expr;
+
+Dataviews : [Dataviews ','] Dataview;
+
+Dataview : Dataview '[' Expr ']'
+         |   ident {'.' ident}*
+         |   ident '(' Dataview ')'
+         |   Constant
+         ;
