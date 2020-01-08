@@ -18,7 +18,7 @@ class MK:
                 io.write(r'    \bnfmore{{\bnfor {}}}\\'.format(self.rule(each)))
             return io.getvalue()
 
-        return r'    \bnfprod{{{}}}{{{}}}'.format(p.name, self.rule(p.rule))
+        return r'    \bnfprod{{{}}}{{{}}}\\'.format(p.name, self.rule(p.rule))
 
     def nest_rule(self, *c: typing.Type[terms.Term]):
         def apply(t: terms.Term):
