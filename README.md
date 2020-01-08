@@ -42,3 +42,9 @@ produces
 ``` 
  
 
+## Using `syntax` back end
+
+Default back end is `backnaur`, but if you want you can use `syntax`.
+
+`paperbnf <xxx.rbnf> --backend syntax`
+ 
