@@ -87,5 +87,5 @@ prod : <NonTerm> '::=' list[atom] <NEWLINE>
      ;
 
 START : <BOF> <NEWLINE> list[prod] <EOF> { to_backnaur($3) }
-      | <BOF> list[prod] <EOF> { to_backnaur($2) }
+      | <BOF> list[prod] <EOF>           { to_backnaur($2) }
       ;
