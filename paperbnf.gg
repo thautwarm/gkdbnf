@@ -1,0 +1,91 @@
+%%inline
+from dataclasses import dataclass
+from typing import *
+@dataclass
+class Term:
+     v: str
+
+@dataclass
+class NonTerm:
+     v: str
+
+@dataclass
+class Seq:
+     xs: 'List[Union[NonTerm, Term]]'
+
+@dataclass
+class More:
+     xs: Seq
+
+@dataclass
+class Prod:
+     descr: str
+     name: str
+     impl : Seq
+
+BNFPROD = r'\bnfprod'
+BNFMOER = r'\bnfmore'
+NT = r'\bnfpn'
+SPACE = r' \bnfsp '
+LIT = r'\bnfts'
+DESCR = r'\bnftd'
+QUAD = r'\quad'
+
+xor = Term("|")
+join = '\\\\\n'.join
+def unwrap(x): return x[1:-1]
+
+def to_backnaur(x):
+     if isinstance(x, list):
+          return join(map(to_backnaur, x))
+
+     if isinstance(x, Prod):
+          impl = to_backnaur(x.impl)
+          if x.descr:
+               name = to_backnaur(NonTerm(x.name))
+               return f"{DESCR}{{{x.descr}}} {QUAD} {BNFPROD}{{{name}}}{{ {impl} }} "
+          
+          return f"{BNFPROD}{{{x.name}}}{{ {impl} }} "
+     if isinstance(x, Term):
+          return f'{LIT}{{{x.v}}}'
+     if isinstance(x, NonTerm):
+          return f'{NT}{{{x.v}}}'
+     if isinstance(x, More):
+          impl = SPACE.join(map(to_backnaur, x.xs))
+          return f'{BNFMOER}{{ {impl} }}'
+     if isinstance(x, Seq):
+          return SPACE.join(map(to_backnaur, x.xs))
+     
+%%
+
+
+list[p] : p          { [ $1 ] }
+        | list[p] p  { $1.append($2); $1 }
+        ;
+
+sep_list[comma, p] :
+          p                     { [ $1 ] }
+        | sep_list[p] comma p   { $1.append($3); $1 }
+        ;
+
+
+
+atom : <NonTerm> { NonTerm(unwrap($1.value)) }
+     | <Term>    { Term($1.value) }
+     | <Term2>   { Term(unwrap($1.value)) }
+     | '|'       { xor }
+     ;
+
+
+
+prod : <NonTerm> '::=' list[atom] <NEWLINE> 
+      { Prod(None, unwrap($1.value), Seq($3)) }
+     | <Term> <NEWLINE> <NonTerm> '::=' list[atom] <NEWLINE> 
+      { Prod($1.value, unwrap($3.value), Seq($5)) }
+     | '|' list[atom] <NEWLINE>
+      { More(Seq($2)) }
+     ;
+
+START : <BOF> <NEWLINE> list[prod] <EOF> { to_backnaur($3) }
+      | <BOF> list[prod] <EOF> { to_backnaur($2) }
+      ;

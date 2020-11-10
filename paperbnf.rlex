@@ -1,0 +1,6 @@
+WS [ ]+
+NEWLINE [\r\n]+
+NonTerm <.*?>
+Term \w+
+Term2 !\w+!
+%ignore WS
