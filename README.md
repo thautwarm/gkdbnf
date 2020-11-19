@@ -1,8 +1,18 @@
 # paperbnf
 
-`pip install paperbnf2`.
+`pip install paperbnf`.
 
 Maybe the most simpest way to write pretty BNF in LaTex.
+
+Use this package with `GKD`:
+
+```tex
+\begin{GDKBNF}{lang-name}
+<a> ::= a b | c
+| d <a>
+
+\end{GDKBNF}
+```
 
 ```python
 import paperbnf
