@@ -167,7 +167,7 @@ def lexer_lazy_bytes(filename, text: bytes, *, pos=0, use_bof=True, use_eof=True
 
 EOF = 7
 BOF = 6
-REGEX = '([ ]+)|([\\r\\n]+)|(<.*?>)|(!\\S+!)|(\\S+)'
+REGEX = '([ ]+)|([\\r\\n]+)|(<.*?>)|(!.*?!)|(\\S+)'
 REGEX_STR = __import__('re').compile(REGEX)
 REGEX_BYTES = __import__('re').compile(REGEX.encode())
 IGNORES = (8,)

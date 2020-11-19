@@ -10,12 +10,21 @@ class NonTerm:
      v: str
 
 @dataclass
+class Or:
+     pass
+
+@dataclass
 class Seq:
-     xs: 'List[Union[NonTerm, Term]]'
+     xs: 'List[Union[NonTerm, Term, Or]]'
 
 @dataclass
 class More:
      xs: Seq
+
+@dataclass
+class LineBreak:
+     pass
+
 
 @dataclass
 class Prod:
@@ -25,6 +34,7 @@ class Prod:
 
 BNFPROD = r'\bnfprod'
 BNFMOER = r'\bnfmore'
+BNFOR = r'\bnfor'
 NT = r'\bnfpn'
 SPACE = r' \bnfsp '
 LIT = r'\bnfts'
@@ -50,9 +60,12 @@ def to_backnaur(x):
           return f'{LIT}{{{x.v}}}'
      if isinstance(x, NonTerm):
           return f'{NT}{{{x.v}}}'
+     if isinstance(x, Or):
+          return BNFOR
      if isinstance(x, More):
-          impl = SPACE.join(map(to_backnaur, x.xs))
-          return f'{BNFMOER}{{ {impl} }}'
+          impl = to_backnaur(x.xs)
+
+          return f'{BNFMOER}{{ {BNFOR} {impl} }}'
      if isinstance(x, Seq):
           return SPACE.join(map(to_backnaur, x.xs))
      
@@ -73,15 +86,17 @@ sep_list[comma, p] :
 atom : <NonTerm> { NonTerm(unwrap($1.value)) }
      | <Term>    { Term($1.value) }
      | <Term2>   { Term(unwrap($1.value)) }
-     | '|'       { xor }
+     | '|'       { Or() }
      ;
 
 
 
 prod : <NonTerm> '::=' list[atom] <NEWLINE> 
       { Prod(None, unwrap($1.value), Seq($3)) }
-     | <Term> <NEWLINE> <NonTerm> '::=' list[atom] <NEWLINE> 
-      { Prod($1.value, unwrap($3.value), Seq($5)) }
+     | <Term> <NonTerm> '::=' list[atom] <NEWLINE> 
+      { Prod($1.value, unwrap($2.value), Seq($4)) }
+     | <Term2> <NonTerm> '::=' list[atom] <NEWLINE> 
+      { Prod(unwrap($1.value), unwrap($2.value), Seq($4)) }
      | '|' list[atom] <NEWLINE>
       { More(Seq($2)) }
      ;

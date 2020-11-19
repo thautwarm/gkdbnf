@@ -1,6 +1,6 @@
 WS [ ]+
 NEWLINE [\r\n]+
 NonTerm <.*?>
-Term2 !\S+!
+Term2 !.*?!
 Term \S+
 %ignore WS
