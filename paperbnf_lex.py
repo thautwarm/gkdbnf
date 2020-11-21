@@ -165,12 +165,12 @@ def lexer_lazy_bytes(filename, text: bytes, *, pos=0, use_bof=True, use_eof=True
     if use_eof:
         yield _Token(pos, lineno, colno, filename, EOF, "")
 
-EOF = 7
-BOF = 6
-REGEX = '([ ]+)|([\\r\\n]+)|(<.*?>)|(!.*?!)|(\\S+)'
+EOF = 9
+BOF = 10
+REGEX = '([ ]+)|([\\r\\n]+\\s*[\\r\\n]*)|(<.*?>)|(!.*?!)|(\\S+)'
 REGEX_STR = __import__('re').compile(REGEX)
 REGEX_BYTES = __import__('re').compile(REGEX.encode())
-IGNORES = (8,)
-UNIONALL_INFO = ((None, None), (8, None), (5, None), (0, None), (2, None), (1, {'|': 3, '::=': 4}))
-UNIONALL_INFO_BYTES = ((None, None), (8, None), (5, None), (0, None), (2, None), (1, {b'|': 3, b'::=': 4}))
-numbering = {'NonTerm': 0, 'Term': 1, 'Term2': 2, 'quote |': 3, 'quote ::=': 4, 'NEWLINE': 5, 'BOF': 6, 'EOF': 7, 'WS': 8}
+IGNORES = (11,)
+UNIONALL_INFO = ((None, None), (11, None), (8, None), (0, None), (2, None), (1, {'::': 5, '::=': 6, '=': 4, '|': 3, '%%%': 7}))
+UNIONALL_INFO_BYTES = ((None, None), (11, None), (8, None), (0, None), (2, None), (1, {b'::': 5, b'::=': 6, b'=': 4, b'|': 3, b'%%%': 7}))
+numbering = {'NonTerm': 0, 'Term': 1, 'Term2': 2, 'quote |': 3, 'quote =': 4, 'quote ::': 5, 'quote ::=': 6, 'quote %%%': 7, 'NEWLINE': 8, 'EOF': 9, 'BOF': 10, 'WS': 11}

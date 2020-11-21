@@ -1,5 +1,5 @@
 WS [ ]+
-NEWLINE [\r\n]+
+NEWLINE [\r\n]+\s*[\r\n]*
 NonTerm <.*?>
 Term2 !.*?!
 Term \S+

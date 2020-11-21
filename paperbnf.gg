@@ -16,59 +16,102 @@ class Or:
 @dataclass
 class Seq:
      xs: 'List[Union[NonTerm, Term, Or]]'
-
+     label: str
+     
 @dataclass
 class More:
-     xs: Seq
-
-@dataclass
-class LineBreak:
-     pass
+     impl: Seq
 
 
 @dataclass
 class Prod:
      descr: str
      name: str
+     type: str
      impl : Seq
 
-BNFPROD = r'\bnfprod'
-BNFMOER = r'\bnfmore'
-BNFOR = r'\bnfor'
-NT = r'\bnfpn'
-SPACE = r' \bnfsp '
-LIT = r'\bnfts'
-DESCR = r'\bnftd'
-QUAD = r'\quad'
+DEF = r'\bnfdef'
+TYPEOF = r'\bnfistypeof'
+TYPE = r'\bnftype'
+OR = r'\bnfalt'
+NT = r'\bnfnonterm'
+SPACE = r' \bnfspace '
+TERM = r'\bnfterm'
+DESCR = r'\bnfdescr'
+LABEL = r'\bnflabel'
+MKLINE = '\\\\\n'
+
+def macro_apply(macro, *args):
+     res = macro
+     for arg in args:
+          res = f'{res}{{ {arg} }}'
+     return res
 
 xor = Term("|")
-join = '\\\\\n'.join
+eq = Term("=")
+define = Term("::=")
+ann = Term("::")
+
+join = MKLINE.join
 def unwrap(x): return x[1:-1]
 
-def to_backnaur(x):
-     if isinstance(x, list):
-          return join(map(to_backnaur, x))
+def to_latex(xs):
+     from io import StringIO
+     xs = iter(xs)
+     lastlineno, x = next(xs)
+     io = StringIO()
+     print = io.write
+     to_backnaur(print, x)
+     for lineno, x in xs:
+          print('\n')
+          print((lineno - lastlineno - 1) * MKLINE)
+          to_backnaur(print, x)
+     return io.getvalue()
+
+def to_backnaur(print, x):
 
      if isinstance(x, Prod):
-          impl = to_backnaur(x.impl)
           if x.descr:
-               name = to_backnaur(NonTerm(x.name))
-               return f"{DESCR}{{{x.descr}}} {QUAD} {BNFPROD}{{{name}}}{{ {impl} }} "
-          
-          return f"{BNFPROD}{{{x.name}}}{{ {impl} }} "
-     if isinstance(x, Term):
-          return f'{LIT}{{{x.v}}}'
-     if isinstance(x, NonTerm):
-          return f'{NT}{{{x.v}}}'
-     if isinstance(x, Or):
-          return BNFOR
-     if isinstance(x, More):
-          impl = to_backnaur(x.xs)
+               print(macro_apply(DESCR, x.descr))
+               print(macro_apply(SPACE))
 
-          return f'{BNFMOER}{{ {BNFOR} {impl} }}'
+          print(' & ')
+
+          to_backnaur(print, NonTerm(x.name))
+          print(' & ')
+          print(macro_apply(DEF))
+          if x.type:
+               print(' & ')
+               print(macro_apply(TYPEOF))
+               print(' & ')
+               print(macro_apply(TYPE, x.type))
+               print(' & ')
+          else:
+               print(' & & & ')
+
+          to_backnaur(print, x.impl)
+          return
+     if isinstance(x, Term):
+          return print(macro_apply(TERM, x.v))
+     if isinstance(x, NonTerm):
+          return print(macro_apply(NT,  x.v))
+     if isinstance(x, Or):
+          print(macro_apply(OR))
+     if isinstance(x, More):
+          return to_backnaur(print, x.impl)
      if isinstance(x, Seq):
-          return SPACE.join(map(to_backnaur, x.xs))
-     
+          if not x.xs:
+               print(' & ')
+               return
+          xs = iter(x.xs)
+          to_backnaur(print, next(xs))
+          for e in x.xs:
+               print(macro_apply(SPACE))
+               to_backnaur(print, e)
+          print(' & ')
+          if x.label:
+               print(x.label)
+          return
 %%
 
 
@@ -87,20 +130,38 @@ atom : <NonTerm> { NonTerm(unwrap($1.value)) }
      | <Term>    { Term($1.value) }
      | <Term2>   { Term(unwrap($1.value)) }
      | '|'       { Or() }
+     | '='       { eq }
+     | '::'      { ann }
+     | '::='     { define }
      ;
 
 
 
-prod : <NonTerm> '::=' list[atom] <NEWLINE> 
-      { Prod(None, unwrap($1.value), Seq($3)) }
-     | <Term> <NonTerm> '::=' list[atom] <NEWLINE> 
-      { Prod($1.value, unwrap($2.value), Seq($4)) }
-     | <Term2> <NonTerm> '::=' list[atom] <NEWLINE> 
-      { Prod(unwrap($1.value), unwrap($2.value), Seq($4)) }
-     | '|' list[atom] <NEWLINE>
-      { More(Seq($2)) }
+type : '::='              { None }
+     | '::' <Term> '='    { $2.value }
+     | '::' <Term2> '='   { unwrap($2.value) }
+     | '::' <NonTerm> '=' { unwrap($2.value) }
      ;
 
-START : <BOF> <NEWLINE> list[prod] <EOF> { to_backnaur($3) }
-      | <BOF> list[prod] <EOF>           { to_backnaur($2) }
+rule : list[atom]               { Seq($1, None)     }
+     | list[atom] '%%%' <Term2> { Seq($1, $3.value) }
+     ;
+
+singleprod : <NonTerm> type rule
+      { ($1.lineno, Prod(None, unwrap($1.value), $2, $3))     }
+     | <Term> <NonTerm> type rule
+      { ($1.lineno, Prod($1.value, unwrap($2.value), $3, $4)) }
+     | <Term2> <NonTerm> type rule
+      { ($1.lineno, Prod(unwrap($1.value), unwrap($2.value), $3, $4)) }
+     | '|' rule
+      { ($1.lineno, More($2)) }
+     ;
+
+prod : prod <NEWLINE> singleprod { $1.append($3); $1 }
+     | singleprod                { [$1] }
+     | prod <EOF>                { $1   }
+     ;
+
+START : <BOF> <NEWLINE> prod { to_latex($3) }
+      | <BOF> prod           { to_latex($2) }
       ;
