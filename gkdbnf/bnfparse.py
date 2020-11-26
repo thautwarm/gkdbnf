@@ -72,7 +72,7 @@ SPACE = r' \bnfspace '
 TERM = r'\bnfterm'
 DESCR = r'\bnfdescr'
 LABEL = r'\bnflabel'
-MKLINE = '\\\\\n'
+MKLINE = '\\\\'
 
 def macro_apply(macro, *args):
      res = macro
@@ -85,7 +85,6 @@ eq = Term("=")
 define = Term("::=")
 ann = Term("::")
 
-join = MKLINE.join
 def unwrap(x): return x[1:-1]
 
 def to_latex(xs):
@@ -97,7 +96,7 @@ def to_latex(xs):
      to_backnaur(print, x)
      for lineno, x in xs:
           print('\n')
-          print((lineno - lastlineno - 1) * MKLINE)
+          print((lineno - lastlineno) * MKLINE)
           to_backnaur(print, x)
      return io.getvalue()
 
@@ -148,14 +147,13 @@ def to_backnaur(print, x):
           if not x.xs:
                print(' & ')
                return
-          print(" $ ")
+
           xs = iter(x.xs)
           to_backnaur(print, next(xs))
           for e in xs:
                print(macro_apply(SPACE))
                to_backnaur(print, e)
           
-          print(" $ ")
           print(' & ')
           if x.label:
                print(macro_apply(LABEL, x.label))
