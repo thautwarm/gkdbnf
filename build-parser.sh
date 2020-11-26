@@ -1,1 +1,1 @@
-fff paperbnf.gg --trace
+fff paperbnf.gg --trace --lexer_out curebnf/bnflexer.py  --parser_out curebnf/bnfparse.py

@@ -1,43 +1,70 @@
-# paperbnf
+# GKD-BNF
 
-`pip install paperbnf`.
+`pip install gkdbnf`.
 
 Maybe the most simplest way to write pretty BNF in LaTex.
 
-Use this package with `GKD`:
+Use this package with `gkdtex`:
 
 ```tex
-\begin{GDKBNF}{lang-name}
+\gkd@usepackage{gkdbnf}
+
+\gkd@bnf{
 <a> ::= a b | c
 | d <a>
-
-\end{GDKBNF}
+}
 ```
 
-```python
-import paperbnf
-print(paperbnf.parse("""
-<nonterm> ::= term !escapeterm! | !|!
-| <nonterm>
+## Syntax
 
-description <nonterm> ::= term !escapeterm! | !|!
-| <nonterm>
-"""))
+
+Valid BNF Syntax:
+```bnf
+atom ::= NONTERMINAL
+       | TERMINAL
+       | TERMINAL2
+       | '|'
+
+rule        ::= '%%%' TERMINAL2
+description ::=  TERMINAL | TERMINAL2
+type        ::= TERMINAL | TERMINAL2 | NONTERMINAL
+
+prod  ::= description? NONTERMINAL '::' type  '=' atom+ rule? 
+      | '|' atom+ rule?
+
+start ::= start NEWLINE
+      |   start prod
+      |   NEWLINE
+      |   prod
 ```
 
-**P.S.1**: Remember to place a new line in the end of the file, this is a must(I made this to avoid unexpected line end by force).
 
-**P.S.2**: Paste the contents of `paperbnf.tex` to your LaTeX source:
-
-```tex
-\newcommand{\bnfdef}{ ::= }
-\newcommand{\bnfistypeof}{ $\in$ }
-\newcommand{\bnftype}[1]{ $ \mathtt{#1} $ }
-\newcommand{\bnfalt}{ | }
-\newcommand{\bnfnonterm}[1]{  $ #1 $ }
-\newcommand{\bnfterm}[1]{  #1 }
-\newcommand{\bnfspace}{  \quad }
-\newcommand{\bnfdescr}[1]{ #1  }
-\newcommand{\bnflabel}[1]{ #1 }
+Lexer rule by regex:
+```
+NEWLINE     = [\r\n]+
+NONTERMINAL = <.*?>
+TERMINAL2   = !.*?!
+TERMINAL    = \S+
 ```
 
+Whitespace tokens are ignored.
+
+## Nice Error Report
+```tex 
+1:  \gkd@usepackage{gkdbnf}
+2:  \gkd@bnf{
+3:  <a> ::= a + 1
+4:
+5:  <c> ::= a a
+6:  Expressions e ::= e
+7: }
+```
+
+You get error
+
+```
+SyntaxError: filename runtest/a.tex:
+line 6, column 13, NonTerm not match
+```
+
+Then you know you should change `Expression e` to `Expression <e>`.

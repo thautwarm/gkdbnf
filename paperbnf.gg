@@ -160,6 +160,7 @@ singleprod : <NonTerm> type rule
 prod : prod <NEWLINE> singleprod { $1.append($3); $1 }
      | singleprod                { [$1] }
      | prod <EOF>                { $1   }
+     | prod <NEWLINE>            { $1   }
      ;
 
 START : <BOF> <NEWLINE> prod { to_latex($3) }

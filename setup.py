@@ -4,10 +4,10 @@ from pathlib import Path
 with Path('README.md').open() as readme:
     readme = readme.read()
 
-version = 1.0
+version = 0.1
 
 setup(
-    name='paperbnf',
+    name='gkdbnf',
     version=version if isinstance(version, str) else str(version),
     keywords="LaTex, BNF",
     # keywords of your project that separated by comma ","
@@ -16,12 +16,12 @@ setup(
     long_description_content_type="text/markdown",
     license='mit',
     python_requires='>=3.7.0',
-    url='https://github.com/thautwarm/paperbnf',
+    url='https://github.com/thautwarm/gkdbnf',
     author='thautwarm',
     author_email='twshere@outlook.com',
     packages=find_packages(),
-    py_modules=['paperbnf_lex', 'paperbnf_parser', 'paperbnf'],
-    install_requires=[],
+    entry_points={"console_scripts": ["gkdbnf=gkdbnf.cli:main"]},
+    install_requires=['wisepy2 >= 1.0', 'gkdtex >= 0.2'],
     platforms="any",
     classifiers=[
         "Programming Language :: Python :: 3.7",

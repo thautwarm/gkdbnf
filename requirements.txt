@@ -1,2 +1,1 @@
-argser
-rbnf-rts >= 0.5.1
+wisepy2 >= 1.0

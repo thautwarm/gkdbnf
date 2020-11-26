@@ -72,11 +72,7 @@ SPACE = r' \bnfspace '
 TERM = r'\bnfterm'
 DESCR = r'\bnfdescr'
 LABEL = r'\bnflabel'
-QUAD = r'\quad'
 MKLINE = '\\\\\n'
-
-def math_mode(content):
-     return f'$ {content} $'
 
 def macro_apply(macro, *args):
      res = macro
@@ -121,7 +117,7 @@ def to_backnaur(print, x):
                print(' & ')
                print(macro_apply(TYPEOF))
                print(' & ')
-               print(macro_apply(TYPE, math_mode(x.type)))
+               print(macro_apply(TYPE, x.type))
                print(' & ')
           else:
                print(' & & & ')
@@ -270,35 +266,114 @@ def mk_parser():
                 builtin_tokens.offset = (_rbnf_old_offset + 1)
                 lcl_3 = _rbnf_cur_token
                 rbnf_tmp_1 = lcl_3
-                lcl_3 = rbnf_named_parse_singleprod(builtin_state, builtin_tokens)
-                rbnf_named__check_2 = lcl_3
-                lcl_3 = rbnf_named__check_2[0]
-                lcl_3 = (lcl_3 == False)
+                lcl_3 = builtin_tokens.offset
+                rbnf_named__off_1 = lcl_3
+                try:
+                    builtin_tokens.array[(builtin_tokens.offset + 0)]
+                    _rbnf_peek_tmp = True
+                except IndexError:
+                    _rbnf_peek_tmp = False
+                lcl_3 = _rbnf_peek_tmp
                 if lcl_3:
-                    lcl_3 = rbnf_named__check_2
+                    lcl_5 = builtin_tokens.array[(builtin_tokens.offset + 0)]
+                    lcl_5 = lcl_5.idint
+                    if (lcl_5 == 3):
+                        lcl_6 = rbnf_named_parse_singleprod(builtin_state, builtin_tokens)
+                        rbnf_named__check_2 = lcl_6
+                        lcl_6 = rbnf_named__check_2[0]
+                        lcl_6 = (lcl_6 == False)
+                        if lcl_6:
+                            lcl_6 = rbnf_named__check_2
+                        else:
+                            lcl_7 = rbnf_named__check_2[1]
+                            rbnf_tmp_2 = lcl_7
+                            lcl_7 = rbnf_tmp_0.append
+                            lcl_7 = lcl_7(rbnf_tmp_2)
+                            rbnf_tmp_1_ = rbnf_tmp_0
+                            lcl_8 = (True, rbnf_tmp_1_)
+                            lcl_6 = lcl_8
+                        lcl_4 = lcl_6
+                    elif (lcl_5 == 2):
+                        lcl_6 = rbnf_named_parse_singleprod(builtin_state, builtin_tokens)
+                        rbnf_named__check_2 = lcl_6
+                        lcl_6 = rbnf_named__check_2[0]
+                        lcl_6 = (lcl_6 == False)
+                        if lcl_6:
+                            lcl_6 = rbnf_named__check_2
+                        else:
+                            lcl_8 = rbnf_named__check_2[1]
+                            rbnf_tmp_2 = lcl_8
+                            lcl_8 = rbnf_tmp_0.append
+                            lcl_8 = lcl_8(rbnf_tmp_2)
+                            rbnf_tmp_1_ = rbnf_tmp_0
+                            lcl_9 = (True, rbnf_tmp_1_)
+                            lcl_6 = lcl_9
+                        lcl_4 = lcl_6
+                    elif (lcl_5 == 1):
+                        lcl_6 = rbnf_named_parse_singleprod(builtin_state, builtin_tokens)
+                        rbnf_named__check_2 = lcl_6
+                        lcl_6 = rbnf_named__check_2[0]
+                        lcl_6 = (lcl_6 == False)
+                        if lcl_6:
+                            lcl_6 = rbnf_named__check_2
+                        else:
+                            lcl_9 = rbnf_named__check_2[1]
+                            rbnf_tmp_2 = lcl_9
+                            lcl_9 = rbnf_tmp_0.append
+                            lcl_9 = lcl_9(rbnf_tmp_2)
+                            rbnf_tmp_1_ = rbnf_tmp_0
+                            lcl_10 = (True, rbnf_tmp_1_)
+                            lcl_6 = lcl_10
+                        lcl_4 = lcl_6
+                    elif (lcl_5 == 0):
+                        lcl_10 = rbnf_named_parse_singleprod(builtin_state, builtin_tokens)
+                        rbnf_named__check_2 = lcl_10
+                        lcl_10 = rbnf_named__check_2[0]
+                        lcl_10 = (lcl_10 == False)
+                        if lcl_10:
+                            lcl_10 = rbnf_named__check_2
+                        else:
+                            lcl_6 = rbnf_named__check_2[1]
+                            rbnf_tmp_2 = lcl_6
+                            lcl_6 = rbnf_tmp_0.append
+                            lcl_6 = lcl_6(rbnf_tmp_2)
+                            rbnf_tmp_1_ = rbnf_tmp_0
+                            lcl_11 = (True, rbnf_tmp_1_)
+                            lcl_10 = lcl_11
+                        lcl_4 = lcl_10
+                    elif (lcl_5 == 8):
+                        rbnf_tmp_1_ = rbnf_tmp_0
+                        lcl_10 = (True, rbnf_tmp_1_)
+                        lcl_4 = lcl_10
+                    elif (lcl_5 == 9):
+                        rbnf_tmp_1_ = rbnf_tmp_0
+                        lcl_10 = (True, rbnf_tmp_1_)
+                        lcl_4 = lcl_10
+                    else:
+                        rbnf_tmp_1_ = rbnf_tmp_0
+                        lcl_10 = (True, rbnf_tmp_1_)
+                        lcl_4 = lcl_10
+                    lcl_3 = lcl_4
                 else:
-                    lcl_4 = rbnf_named__check_2[1]
-                    rbnf_tmp_2 = lcl_4
-                    lcl_4 = rbnf_tmp_0.append
-                    lcl_4 = lcl_4(rbnf_tmp_2)
-                    rbnf_tmp_1_ = rbnf_tmp_0
-                    lcl_5 = (True, rbnf_tmp_1_)
-                    lcl_3 = lcl_5
+                    lcl_10 = (rbnf_named__off_1, 'prod got EOF')
+                    lcl_10 = builtin_cons(lcl_10, builtin_nil)
+                    lcl_10 = (False, lcl_10)
+                    lcl_3 = lcl_10
                 lcl_1 = lcl_3
             elif (lcl_2 == 9):
                 _rbnf_old_offset = builtin_tokens.offset
                 _rbnf_cur_token = builtin_tokens.array[_rbnf_old_offset]
                 builtin_tokens.offset = (_rbnf_old_offset + 1)
-                lcl_3 = _rbnf_cur_token
-                rbnf_tmp_1 = lcl_3
+                lcl_10 = _rbnf_cur_token
+                rbnf_tmp_1 = lcl_10
                 rbnf_tmp_1_ = rbnf_tmp_0
-                lcl_3 = (True, rbnf_tmp_1_)
-                lcl_1 = lcl_3
+                lcl_10 = (True, rbnf_tmp_1_)
+                lcl_1 = lcl_10
             else:
-                lcl_3 = (rbnf_named__off_0, 'prod lookahead failed')
-                lcl_3 = builtin_cons(lcl_3, builtin_nil)
-                lcl_3 = (False, lcl_3)
-                lcl_1 = lcl_3
+                lcl_10 = (rbnf_named__off_0, 'prod lookahead failed')
+                lcl_10 = builtin_cons(lcl_10, builtin_nil)
+                lcl_10 = (False, lcl_10)
+                lcl_1 = lcl_10
             lcl_0 = lcl_1
         else:
             lcl_1 = (rbnf_named__off_0, 'prod got EOF')
