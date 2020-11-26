@@ -118,7 +118,7 @@ def to_backnaur(print, x):
           print(" $ ")
           xs = iter(x.xs)
           to_backnaur(print, next(xs))
-          for e in x.xs:
+          for e in xs:
                print(macro_apply(SPACE))
                to_backnaur(print, e)
           
