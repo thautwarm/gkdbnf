@@ -111,8 +111,7 @@ def to_backnaur(print, x):
           print(' & ')
 
           to_backnaur(print, NonTerm(x.name))
-          print(' & ')
-          print(macro_apply(DEF))
+
           if x.type:
                print(' & ')
                print(macro_apply(TYPEOF))
@@ -121,6 +120,9 @@ def to_backnaur(print, x):
                print(' & ')
           else:
                print(' & & & ')
+          
+          print(macro_apply(DEF))
+          print(' & ')
 
           to_backnaur(print, x.impl)
           return
@@ -131,19 +133,32 @@ def to_backnaur(print, x):
      if isinstance(x, Or):
           print(macro_apply(OR))
      if isinstance(x, More):
+          # desc
+          print(' & ')
+          # name
+          print(' & ')
+          # typeof
+          print(' & ')
+          # type
+          print(' & ')
+          print(macro_apply(OR))
+          print(' & ')
           return to_backnaur(print, x.impl)
      if isinstance(x, Seq):
           if not x.xs:
                print(' & ')
                return
+          print(" $ ")
           xs = iter(x.xs)
           to_backnaur(print, next(xs))
           for e in x.xs:
                print(macro_apply(SPACE))
                to_backnaur(print, e)
+          
+          print(" $ ")
           print(' & ')
           if x.label:
-               print(x.label)
+               print(macro_apply(LABEL, x.label))
           return
 from typing import Generic, TypeVar
 T = TypeVar('T')
