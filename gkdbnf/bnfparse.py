@@ -98,6 +98,7 @@ def to_latex(xs):
           print('\n')
           print((lineno - lastlineno) * MKLINE)
           to_backnaur(print, x)
+          lastlineno = lineno
      return io.getvalue()
 
 def to_backnaur(print, x):

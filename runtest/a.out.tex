@@ -1,15 +1,17 @@
 
-        \newcommand{\bnfdef}{ ::= }
-        \newcommand{\bnfistypeof}{ $\in$ }
-        \newcommand{\bnftype}[1]{ $ \mathtt{#1} $ }
-        \newcommand{\bnfalt}{ | }
-        \newcommand{\bnfnonterm}[1]{  $ #1 $ }
-        \newcommand{\bnfterm}[1]{  #1 }
-        \newcommand{\bnfspace}{  \quad }
-        \newcommand{\bnfdescr}[1]{ #1  }
-        \newcommand{\bnflabel}[1]{ #1 }
+\newcommand{\bnfdef}{::=}
+\newcommand{\bnfistypeof}{$\in$}
+\newcommand{\bnftype}[1]{$\mathtt{#1}$}
+\newcommand{\bnfalt}{$\mathrm{|}$}
+\newcommand{\bnfnonterm}[1]{$\mathit{#1}$}
+\newcommand{\bnfterm}[1]{$\mathrm{#1}$}
+\newcommand{\bnfspace}{}
+\newcommand{\bnfdescr}[1]{ #1  }
+\newcommand{\bnflabel}[1]{ #1 }
         
 \begin{tabular}{lllllll}
- & \bnfnonterm{ a } & & & \bnfdef &  $ \bnfterm{ a } \bnfspace \bnfterm{ + } \bnfspace \bnfterm{ 1 } $  & 
- &  &  &  & \bnfalt &  $ \bnfterm{ a } \bnfspace \bnfterm{ b } \bnfspace \bnfterm{ c } $  & 
+ & \bnfnonterm{ a } & & & \bnfdef & \bnfterm{ a } \bnfspace \bnfterm{ + } \bnfspace \bnfterm{ 1 } & 
+\\ &  &  &  & \bnfalt & \bnfterm{ a } \bnfspace \bnfterm{ b } \bnfspace \bnfterm{ c } & 
+\\ &  &  &  & \bnfalt & \bnfterm{ e } \bnfspace \bnfterm{ f } \bnfspace \bnfterm{ g } & 
+\\\\ & \bnfnonterm{ d } & & & \bnfdef & \bnfterm{ a } \bnfspace \bnfterm{ + } \bnfspace \bnfterm{ 1 } & 
 \end{tabular}
