@@ -29,7 +29,7 @@ Use this package with `gkdtex`:
 }
 ```
 
-![example0.PNG](example.PNG)
+![example0.PNG](example0.PNG)
 
 ## Syntax
 
