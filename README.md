@@ -10,20 +10,22 @@ Use this package with `gkdtex`:
 
 ```tex
 \gkd@bnf{
-<i, j> :: Integer
-<b> :: Boolean
-<l> :: Labels
+<i> :: Integer
+<x> :: Symbol
+<s> :: String
 
+<h> :: !Expr[MinDyn]! = \mathbf{func} (\! <x*> \!) \{ <h*> \} %%% functions
+        | <h> ( <h*> ) %%% applications
+        | <x> = <h>   %%% assignments
+        | \mathbf{if} ( <h> ) \{ <h*> \} \{ <h*> \} %%% conditions
+        | <x> %%% variable read
+        | <i>
+        | <s>
 
-!Instructions! <h> :: !Instr[MinSIL]! = \mathbf{load} \; i         %%% \qquad  \qquad  describe load 
-                                     |  \mathbf{store} \; i
-                                     |  \mathbf{push} \; \zeta 
-                                     |  \mathbf{pop}
-                                     |  \mathbf{jump\mbox{-}if} l %%%   consume TOS.
-                                     |  \cdots
-
-<e> ::= <e> ( <e> * ) |  atom
-
+<toplevel> ::= <h>
+        | \mathbf{const} <x> = <h>
+        
+<proc> ::= <toplevel*>
 }
 ```
 
