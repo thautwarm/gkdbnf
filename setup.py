@@ -4,7 +4,7 @@ from pathlib import Path
 with Path('README.md').open() as readme:
     readme = readme.read()
 
-version = "0.4.1"
+version = "0.4.2"
 
 setup(
     name='gkdbnf',

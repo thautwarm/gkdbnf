@@ -1,4 +1,4 @@
-def bnf(src, *, self, tex_print, opts = "llllrlr"):
+def bnf(src, *, self, tex_print, opts = "lrllrlr"):
     import gkdtex.developer_utilities as dev
     from gkdbnf.wrap import parse
     if not isinstance(opts, str):
