@@ -2,5 +2,6 @@ WS [ ]+
 NEWLINE [\r\n]+\s*[\r\n]*
 NonTerm <.*?>
 Term2 !.*?!
+Comment %%%.*
 Term \S+
 %ignore WS

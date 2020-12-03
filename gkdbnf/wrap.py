@@ -4,19 +4,34 @@ from gkdbnf.bnflexer import *
 from gkdbnf.bnfparse import *
 
 _parse =  mk_parser()
+
 def parse(text: str, filename: str = "unknown", show=False, get_line_inc=lambda : 0):
     tokens = lexer(filename, text)
-    res = _parse(None, Tokens(tokens))
-    if res[0]:
-        res = res[1]
-        if show: print(res)
-        return res
+    status, res_or_err = _parse(None, Tokens(tokens))
+    if status:
+        if show:
+            print(res_or_err)
+        return res_or_err
 
     msgs = []
-    for each in res[1]:
+    lineno = None
+    colno = None
+    filename = None
+    offset = 0
+    msg = ""
+    inc = get_line_inc()
+    for each in res_or_err:
         i, msg = each
         token = tokens[i]
-        lineno = token.lineno + get_line_inc() + 1
+        lineno = token.lineno + inc
         colno = token.colno
-        msgs.append(f"line {lineno}, column {colno}, {msg}")
-    raise SyntaxError(f"filename {filename}:\n" + "\n".join(msgs))
+        offset = token.offset
+        filename = token.filename
+        break
+    e = SyntaxError(msg)
+    e.lineno = lineno + get_line_inc()
+    e.colno = colno
+    e.filename = filename
+    e.text = text[offset - colno:text.find('\n', offset)]
+    e.offset = colno
+    raise e

@@ -6,14 +6,28 @@ Maybe the most simplest way to write pretty BNF in LaTex.
 
 Use this package with `gkdtex`:
 
-```tex
-\gkd@usepackage{gkdbnf}
+## Usage
 
+```tex
 \gkd@bnf{
-<a> ::= a b | c
-| d <a>
+<i, j> :: Integer
+<b> :: Boolean
+<l> :: Labels
+
+
+!Instructions! <h> :: !Instr[MinSIL]! = \mathbf{load} \; i         %%% \qquad  \qquad  describe load 
+                                     |  \mathbf{store} \; i
+                                     |  \mathbf{push} \; \zeta 
+                                     |  \mathbf{pop}
+                                     |  \mathbf{jump\mbox{-}if} l %%%   consume TOS.
+                                     |  \cdots
+
+<e> ::= <e> ( <e> * ) |  atom
+
 }
 ```
+
+![example.PNG](example.PNG)
 
 ## Syntax
 

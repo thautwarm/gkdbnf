@@ -63,6 +63,12 @@ class Prod:
      type: str
      impl : Seq
 
+@dataclass
+class Decl:
+     descr: str
+     name: str
+     type: str
+
 DEF = r'\bnfdef'
 TYPEOF = r'\bnfistypeof'
 TYPE = r'\bnftype'
@@ -103,7 +109,26 @@ def to_latex(xs):
 
 def to_backnaur(print, x):
 
-     if isinstance(x, Prod):
+     if isinstance(x, Decl):
+          if x.descr:
+               print(macro_apply(DESCR, x.descr))
+               print(macro_apply(SPACE))
+
+          print(' & ')
+
+          to_backnaur(print, NonTerm(x.name))
+
+          if x.type:
+               print(' & ')
+               print(macro_apply(TYPEOF))
+               print(' & ')
+               print(macro_apply(TYPE, x.type))
+               print(' & & &')
+          else:
+               print(' & & & & & ')
+          return
+
+     elif isinstance(x, Prod):
           if x.descr:
                print(macro_apply(DESCR, x.descr))
                print(macro_apply(SPACE))
@@ -159,6 +184,9 @@ def to_backnaur(print, x):
           if x.label:
                print(macro_apply(LABEL, x.label))
           return
+
+def get_label(x):
+     return x[3:]          
 from typing import Generic, TypeVar
 T = TypeVar('T')
 
@@ -753,29 +781,11 @@ def mk_parser():
                     builtin_tokens.offset = (_rbnf_old_offset + 1)
                     lcl_4 = _rbnf_cur_token
                     rbnf_tmp_1 = lcl_4
-                    try:
-                        _rbnf_cur_token = builtin_tokens.array[builtin_tokens.offset]
-                        if (_rbnf_cur_token.idint is 2):
-                            builtin_tokens.offset += 1
-                        else:
-                            _rbnf_cur_token = None
-                    except IndexError:
-                        _rbnf_cur_token = None
-                    lcl_4 = _rbnf_cur_token
-                    rbnf_tmp_2 = lcl_4
-                    lcl_4 = (rbnf_tmp_2 is None)
-                    if lcl_4:
-                        lcl_5 = builtin_tokens.offset
-                        lcl_5 = (lcl_5, 'Term2 not match')
-                        lcl_5 = builtin_cons(lcl_5, builtin_nil)
-                        lcl_5 = (False, lcl_5)
-                        lcl_4 = lcl_5
-                    else:
-                        lcl_5 = rbnf_tmp_2.value
-                        lcl_5 = Seq(rbnf_tmp_0, lcl_5)
-                        rbnf_tmp_1_ = lcl_5
-                        lcl_5 = (True, rbnf_tmp_1_)
-                        lcl_4 = lcl_5
+                    lcl_4 = rbnf_tmp_1.value
+                    lcl_4 = get_label(lcl_4)
+                    lcl_4 = Seq(rbnf_tmp_0, lcl_4)
+                    rbnf_tmp_1_ = lcl_4
+                    lcl_4 = (True, rbnf_tmp_1_)
                     lcl_2 = lcl_4
                 else:
                     lcl_4 = Seq(rbnf_tmp_0, None)
@@ -858,25 +868,181 @@ def mk_parser():
                     else:
                         lcl_5 = rbnf_named__check_2[1]
                         rbnf_tmp_2 = lcl_5
-                        lcl_5 = rbnf_named_parse_rule(builtin_state, builtin_tokens)
-                        rbnf_named__check_3 = lcl_5
-                        lcl_5 = rbnf_named__check_3[0]
-                        lcl_5 = (lcl_5 == False)
+                        lcl_5 = builtin_tokens.offset
+                        rbnf_named__off_2 = lcl_5
+                        try:
+                            builtin_tokens.array[(builtin_tokens.offset + 0)]
+                            _rbnf_peek_tmp = True
+                        except IndexError:
+                            _rbnf_peek_tmp = False
+                        lcl_5 = _rbnf_peek_tmp
                         if lcl_5:
-                            lcl_5 = rbnf_named__check_3
-                        else:
-                            lcl_6 = rbnf_named__check_3[1]
-                            rbnf_tmp_3 = lcl_6
-                            lcl_6 = rbnf_tmp_0.lineno
-                            lcl_7 = rbnf_tmp_0.value
-                            lcl_7 = unwrap(lcl_7)
-                            lcl_8 = rbnf_tmp_1.value
-                            lcl_8 = unwrap(lcl_8)
-                            lcl_7 = Prod(lcl_7, lcl_8, rbnf_tmp_2, rbnf_tmp_3)
-                            lcl_6 = (lcl_6, lcl_7)
-                            rbnf_tmp_1_ = lcl_6
-                            lcl_6 = (True, rbnf_tmp_1_)
+                            lcl_7 = builtin_tokens.array[(builtin_tokens.offset + 0)]
+                            lcl_7 = lcl_7.idint
+                            if (lcl_7 == 3):
+                                lcl_8 = rbnf_named_parse_rule(builtin_state, builtin_tokens)
+                                rbnf_named__check_3 = lcl_8
+                                lcl_8 = rbnf_named__check_3[0]
+                                lcl_8 = (lcl_8 == False)
+                                if lcl_8:
+                                    lcl_8 = rbnf_named__check_3
+                                else:
+                                    lcl_9 = rbnf_named__check_3[1]
+                                    rbnf_tmp_3 = lcl_9
+                                    lcl_9 = rbnf_tmp_0.lineno
+                                    lcl_10 = rbnf_tmp_0.value
+                                    lcl_10 = unwrap(lcl_10)
+                                    lcl_11 = rbnf_tmp_1.value
+                                    lcl_11 = unwrap(lcl_11)
+                                    lcl_10 = Prod(lcl_10, lcl_11, rbnf_tmp_2, rbnf_tmp_3)
+                                    lcl_10 = (lcl_9, lcl_10)
+                                    rbnf_tmp_1_ = lcl_10
+                                    lcl_10 = (True, rbnf_tmp_1_)
+                                    lcl_8 = lcl_10
+                                lcl_6 = lcl_8
+                            elif (lcl_7 == 4):
+                                lcl_10 = rbnf_named_parse_rule(builtin_state, builtin_tokens)
+                                rbnf_named__check_3 = lcl_10
+                                lcl_10 = rbnf_named__check_3[0]
+                                lcl_10 = (lcl_10 == False)
+                                if lcl_10:
+                                    lcl_10 = rbnf_named__check_3
+                                else:
+                                    lcl_11 = rbnf_named__check_3[1]
+                                    rbnf_tmp_3 = lcl_11
+                                    lcl_11 = rbnf_tmp_0.lineno
+                                    lcl_8 = rbnf_tmp_0.value
+                                    lcl_8 = unwrap(lcl_8)
+                                    lcl_9 = rbnf_tmp_1.value
+                                    lcl_9 = unwrap(lcl_9)
+                                    lcl_8 = Prod(lcl_8, lcl_9, rbnf_tmp_2, rbnf_tmp_3)
+                                    lcl_11 = (lcl_11, lcl_8)
+                                    rbnf_tmp_1_ = lcl_11
+                                    lcl_11 = (True, rbnf_tmp_1_)
+                                    lcl_10 = lcl_11
+                                lcl_6 = lcl_10
+                            elif (lcl_7 == 6):
+                                lcl_10 = rbnf_named_parse_rule(builtin_state, builtin_tokens)
+                                rbnf_named__check_3 = lcl_10
+                                lcl_10 = rbnf_named__check_3[0]
+                                lcl_10 = (lcl_10 == False)
+                                if lcl_10:
+                                    lcl_10 = rbnf_named__check_3
+                                else:
+                                    lcl_11 = rbnf_named__check_3[1]
+                                    rbnf_tmp_3 = lcl_11
+                                    lcl_11 = rbnf_tmp_0.lineno
+                                    lcl_8 = rbnf_tmp_0.value
+                                    lcl_8 = unwrap(lcl_8)
+                                    lcl_9 = rbnf_tmp_1.value
+                                    lcl_9 = unwrap(lcl_9)
+                                    lcl_8 = Prod(lcl_8, lcl_9, rbnf_tmp_2, rbnf_tmp_3)
+                                    lcl_11 = (lcl_11, lcl_8)
+                                    rbnf_tmp_1_ = lcl_11
+                                    lcl_11 = (True, rbnf_tmp_1_)
+                                    lcl_10 = lcl_11
+                                lcl_6 = lcl_10
+                            elif (lcl_7 == 5):
+                                lcl_10 = rbnf_named_parse_rule(builtin_state, builtin_tokens)
+                                rbnf_named__check_3 = lcl_10
+                                lcl_10 = rbnf_named__check_3[0]
+                                lcl_10 = (lcl_10 == False)
+                                if lcl_10:
+                                    lcl_10 = rbnf_named__check_3
+                                else:
+                                    lcl_11 = rbnf_named__check_3[1]
+                                    rbnf_tmp_3 = lcl_11
+                                    lcl_11 = rbnf_tmp_0.lineno
+                                    lcl_8 = rbnf_tmp_0.value
+                                    lcl_8 = unwrap(lcl_8)
+                                    lcl_9 = rbnf_tmp_1.value
+                                    lcl_9 = unwrap(lcl_9)
+                                    lcl_8 = Prod(lcl_8, lcl_9, rbnf_tmp_2, rbnf_tmp_3)
+                                    lcl_11 = (lcl_11, lcl_8)
+                                    rbnf_tmp_1_ = lcl_11
+                                    lcl_11 = (True, rbnf_tmp_1_)
+                                    lcl_10 = lcl_11
+                                lcl_6 = lcl_10
+                            elif (lcl_7 == 2):
+                                lcl_10 = rbnf_named_parse_rule(builtin_state, builtin_tokens)
+                                rbnf_named__check_3 = lcl_10
+                                lcl_10 = rbnf_named__check_3[0]
+                                lcl_10 = (lcl_10 == False)
+                                if lcl_10:
+                                    lcl_10 = rbnf_named__check_3
+                                else:
+                                    lcl_11 = rbnf_named__check_3[1]
+                                    rbnf_tmp_3 = lcl_11
+                                    lcl_11 = rbnf_tmp_0.lineno
+                                    lcl_8 = rbnf_tmp_0.value
+                                    lcl_8 = unwrap(lcl_8)
+                                    lcl_9 = rbnf_tmp_1.value
+                                    lcl_9 = unwrap(lcl_9)
+                                    lcl_8 = Prod(lcl_8, lcl_9, rbnf_tmp_2, rbnf_tmp_3)
+                                    lcl_11 = (lcl_11, lcl_8)
+                                    rbnf_tmp_1_ = lcl_11
+                                    lcl_11 = (True, rbnf_tmp_1_)
+                                    lcl_10 = lcl_11
+                                lcl_6 = lcl_10
+                            elif (lcl_7 == 1):
+                                lcl_10 = rbnf_named_parse_rule(builtin_state, builtin_tokens)
+                                rbnf_named__check_3 = lcl_10
+                                lcl_10 = rbnf_named__check_3[0]
+                                lcl_10 = (lcl_10 == False)
+                                if lcl_10:
+                                    lcl_10 = rbnf_named__check_3
+                                else:
+                                    lcl_11 = rbnf_named__check_3[1]
+                                    rbnf_tmp_3 = lcl_11
+                                    lcl_11 = rbnf_tmp_0.lineno
+                                    lcl_8 = rbnf_tmp_0.value
+                                    lcl_8 = unwrap(lcl_8)
+                                    lcl_9 = rbnf_tmp_1.value
+                                    lcl_9 = unwrap(lcl_9)
+                                    lcl_8 = Prod(lcl_8, lcl_9, rbnf_tmp_2, rbnf_tmp_3)
+                                    lcl_11 = (lcl_11, lcl_8)
+                                    rbnf_tmp_1_ = lcl_11
+                                    lcl_11 = (True, rbnf_tmp_1_)
+                                    lcl_10 = lcl_11
+                                lcl_6 = lcl_10
+                            elif (lcl_7 == 0):
+                                lcl_10 = rbnf_named_parse_rule(builtin_state, builtin_tokens)
+                                rbnf_named__check_3 = lcl_10
+                                lcl_10 = rbnf_named__check_3[0]
+                                lcl_10 = (lcl_10 == False)
+                                if lcl_10:
+                                    lcl_10 = rbnf_named__check_3
+                                else:
+                                    lcl_11 = rbnf_named__check_3[1]
+                                    rbnf_tmp_3 = lcl_11
+                                    lcl_11 = rbnf_tmp_0.lineno
+                                    lcl_8 = rbnf_tmp_0.value
+                                    lcl_8 = unwrap(lcl_8)
+                                    lcl_9 = rbnf_tmp_1.value
+                                    lcl_9 = unwrap(lcl_9)
+                                    lcl_8 = Prod(lcl_8, lcl_9, rbnf_tmp_2, rbnf_tmp_3)
+                                    lcl_11 = (lcl_11, lcl_8)
+                                    rbnf_tmp_1_ = lcl_11
+                                    lcl_11 = (True, rbnf_tmp_1_)
+                                    lcl_10 = lcl_11
+                                lcl_6 = lcl_10
+                            else:
+                                lcl_10 = rbnf_tmp_0.lineno
+                                lcl_11 = rbnf_tmp_0.value
+                                lcl_11 = unwrap(lcl_11)
+                                lcl_8 = rbnf_tmp_1.value
+                                lcl_8 = unwrap(lcl_8)
+                                lcl_11 = Decl(lcl_11, lcl_8, rbnf_tmp_2)
+                                lcl_10 = (lcl_10, lcl_11)
+                                rbnf_tmp_1_ = lcl_10
+                                lcl_10 = (True, rbnf_tmp_1_)
+                                lcl_6 = lcl_10
                             lcl_5 = lcl_6
+                        else:
+                            lcl_10 = (rbnf_named__off_2, 'singleprod got EOF')
+                            lcl_10 = builtin_cons(lcl_10, builtin_nil)
+                            lcl_10 = (False, lcl_10)
+                            lcl_5 = lcl_10
                         lcl_4 = lcl_5
                     lcl_3 = lcl_4
                 lcl_1 = lcl_3
@@ -884,8 +1050,8 @@ def mk_parser():
                 _rbnf_old_offset = builtin_tokens.offset
                 _rbnf_cur_token = builtin_tokens.array[_rbnf_old_offset]
                 builtin_tokens.offset = (_rbnf_old_offset + 1)
-                lcl_3 = _rbnf_cur_token
-                rbnf_tmp_0 = lcl_3
+                lcl_10 = _rbnf_cur_token
+                rbnf_tmp_0 = lcl_10
                 try:
                     _rbnf_cur_token = builtin_tokens.array[builtin_tokens.offset]
                     if (_rbnf_cur_token.idint is 0):
@@ -894,85 +1060,376 @@ def mk_parser():
                         _rbnf_cur_token = None
                 except IndexError:
                     _rbnf_cur_token = None
-                lcl_3 = _rbnf_cur_token
-                rbnf_tmp_1 = lcl_3
-                lcl_3 = (rbnf_tmp_1 is None)
-                if lcl_3:
-                    lcl_4 = builtin_tokens.offset
-                    lcl_4 = (lcl_4, 'NonTerm not match')
-                    lcl_4 = builtin_cons(lcl_4, builtin_nil)
-                    lcl_4 = (False, lcl_4)
-                    lcl_3 = lcl_4
+                lcl_10 = _rbnf_cur_token
+                rbnf_tmp_1 = lcl_10
+                lcl_10 = (rbnf_tmp_1 is None)
+                if lcl_10:
+                    lcl_11 = builtin_tokens.offset
+                    lcl_11 = (lcl_11, 'NonTerm not match')
+                    lcl_11 = builtin_cons(lcl_11, builtin_nil)
+                    lcl_11 = (False, lcl_11)
+                    lcl_10 = lcl_11
                 else:
-                    lcl_4 = rbnf_named_parse_type(builtin_state, builtin_tokens)
-                    rbnf_named__check_2 = lcl_4
-                    lcl_4 = rbnf_named__check_2[0]
-                    lcl_4 = (lcl_4 == False)
-                    if lcl_4:
-                        lcl_4 = rbnf_named__check_2
+                    lcl_11 = rbnf_named_parse_type(builtin_state, builtin_tokens)
+                    rbnf_named__check_2 = lcl_11
+                    lcl_11 = rbnf_named__check_2[0]
+                    lcl_11 = (lcl_11 == False)
+                    if lcl_11:
+                        lcl_11 = rbnf_named__check_2
                     else:
-                        lcl_5 = rbnf_named__check_2[1]
-                        rbnf_tmp_2 = lcl_5
-                        lcl_5 = rbnf_named_parse_rule(builtin_state, builtin_tokens)
-                        rbnf_named__check_3 = lcl_5
-                        lcl_5 = rbnf_named__check_3[0]
-                        lcl_5 = (lcl_5 == False)
-                        if lcl_5:
-                            lcl_5 = rbnf_named__check_3
+                        lcl_3 = rbnf_named__check_2[1]
+                        rbnf_tmp_2 = lcl_3
+                        lcl_3 = builtin_tokens.offset
+                        rbnf_named__off_2 = lcl_3
+                        try:
+                            builtin_tokens.array[(builtin_tokens.offset + 0)]
+                            _rbnf_peek_tmp = True
+                        except IndexError:
+                            _rbnf_peek_tmp = False
+                        lcl_3 = _rbnf_peek_tmp
+                        if lcl_3:
+                            lcl_5 = builtin_tokens.array[(builtin_tokens.offset + 0)]
+                            lcl_5 = lcl_5.idint
+                            if (lcl_5 == 3):
+                                lcl_6 = rbnf_named_parse_rule(builtin_state, builtin_tokens)
+                                rbnf_named__check_3 = lcl_6
+                                lcl_6 = rbnf_named__check_3[0]
+                                lcl_6 = (lcl_6 == False)
+                                if lcl_6:
+                                    lcl_6 = rbnf_named__check_3
+                                else:
+                                    lcl_7 = rbnf_named__check_3[1]
+                                    rbnf_tmp_3 = lcl_7
+                                    lcl_7 = rbnf_tmp_0.lineno
+                                    lcl_8 = rbnf_tmp_0.value
+                                    lcl_9 = rbnf_tmp_1.value
+                                    lcl_9 = unwrap(lcl_9)
+                                    lcl_8 = Prod(lcl_8, lcl_9, rbnf_tmp_2, rbnf_tmp_3)
+                                    lcl_7 = (lcl_7, lcl_8)
+                                    rbnf_tmp_1_ = lcl_7
+                                    lcl_7 = (True, rbnf_tmp_1_)
+                                    lcl_6 = lcl_7
+                                lcl_4 = lcl_6
+                            elif (lcl_5 == 4):
+                                lcl_6 = rbnf_named_parse_rule(builtin_state, builtin_tokens)
+                                rbnf_named__check_3 = lcl_6
+                                lcl_6 = rbnf_named__check_3[0]
+                                lcl_6 = (lcl_6 == False)
+                                if lcl_6:
+                                    lcl_6 = rbnf_named__check_3
+                                else:
+                                    lcl_7 = rbnf_named__check_3[1]
+                                    rbnf_tmp_3 = lcl_7
+                                    lcl_7 = rbnf_tmp_0.lineno
+                                    lcl_8 = rbnf_tmp_0.value
+                                    lcl_9 = rbnf_tmp_1.value
+                                    lcl_9 = unwrap(lcl_9)
+                                    lcl_8 = Prod(lcl_8, lcl_9, rbnf_tmp_2, rbnf_tmp_3)
+                                    lcl_7 = (lcl_7, lcl_8)
+                                    rbnf_tmp_1_ = lcl_7
+                                    lcl_7 = (True, rbnf_tmp_1_)
+                                    lcl_6 = lcl_7
+                                lcl_4 = lcl_6
+                            elif (lcl_5 == 6):
+                                lcl_6 = rbnf_named_parse_rule(builtin_state, builtin_tokens)
+                                rbnf_named__check_3 = lcl_6
+                                lcl_6 = rbnf_named__check_3[0]
+                                lcl_6 = (lcl_6 == False)
+                                if lcl_6:
+                                    lcl_6 = rbnf_named__check_3
+                                else:
+                                    lcl_7 = rbnf_named__check_3[1]
+                                    rbnf_tmp_3 = lcl_7
+                                    lcl_7 = rbnf_tmp_0.lineno
+                                    lcl_8 = rbnf_tmp_0.value
+                                    lcl_9 = rbnf_tmp_1.value
+                                    lcl_9 = unwrap(lcl_9)
+                                    lcl_8 = Prod(lcl_8, lcl_9, rbnf_tmp_2, rbnf_tmp_3)
+                                    lcl_7 = (lcl_7, lcl_8)
+                                    rbnf_tmp_1_ = lcl_7
+                                    lcl_7 = (True, rbnf_tmp_1_)
+                                    lcl_6 = lcl_7
+                                lcl_4 = lcl_6
+                            elif (lcl_5 == 5):
+                                lcl_6 = rbnf_named_parse_rule(builtin_state, builtin_tokens)
+                                rbnf_named__check_3 = lcl_6
+                                lcl_6 = rbnf_named__check_3[0]
+                                lcl_6 = (lcl_6 == False)
+                                if lcl_6:
+                                    lcl_6 = rbnf_named__check_3
+                                else:
+                                    lcl_7 = rbnf_named__check_3[1]
+                                    rbnf_tmp_3 = lcl_7
+                                    lcl_7 = rbnf_tmp_0.lineno
+                                    lcl_8 = rbnf_tmp_0.value
+                                    lcl_9 = rbnf_tmp_1.value
+                                    lcl_9 = unwrap(lcl_9)
+                                    lcl_8 = Prod(lcl_8, lcl_9, rbnf_tmp_2, rbnf_tmp_3)
+                                    lcl_7 = (lcl_7, lcl_8)
+                                    rbnf_tmp_1_ = lcl_7
+                                    lcl_7 = (True, rbnf_tmp_1_)
+                                    lcl_6 = lcl_7
+                                lcl_4 = lcl_6
+                            elif (lcl_5 == 2):
+                                lcl_6 = rbnf_named_parse_rule(builtin_state, builtin_tokens)
+                                rbnf_named__check_3 = lcl_6
+                                lcl_6 = rbnf_named__check_3[0]
+                                lcl_6 = (lcl_6 == False)
+                                if lcl_6:
+                                    lcl_6 = rbnf_named__check_3
+                                else:
+                                    lcl_7 = rbnf_named__check_3[1]
+                                    rbnf_tmp_3 = lcl_7
+                                    lcl_7 = rbnf_tmp_0.lineno
+                                    lcl_8 = rbnf_tmp_0.value
+                                    lcl_9 = rbnf_tmp_1.value
+                                    lcl_9 = unwrap(lcl_9)
+                                    lcl_8 = Prod(lcl_8, lcl_9, rbnf_tmp_2, rbnf_tmp_3)
+                                    lcl_7 = (lcl_7, lcl_8)
+                                    rbnf_tmp_1_ = lcl_7
+                                    lcl_7 = (True, rbnf_tmp_1_)
+                                    lcl_6 = lcl_7
+                                lcl_4 = lcl_6
+                            elif (lcl_5 == 1):
+                                lcl_6 = rbnf_named_parse_rule(builtin_state, builtin_tokens)
+                                rbnf_named__check_3 = lcl_6
+                                lcl_6 = rbnf_named__check_3[0]
+                                lcl_6 = (lcl_6 == False)
+                                if lcl_6:
+                                    lcl_6 = rbnf_named__check_3
+                                else:
+                                    lcl_7 = rbnf_named__check_3[1]
+                                    rbnf_tmp_3 = lcl_7
+                                    lcl_7 = rbnf_tmp_0.lineno
+                                    lcl_8 = rbnf_tmp_0.value
+                                    lcl_9 = rbnf_tmp_1.value
+                                    lcl_9 = unwrap(lcl_9)
+                                    lcl_8 = Prod(lcl_8, lcl_9, rbnf_tmp_2, rbnf_tmp_3)
+                                    lcl_7 = (lcl_7, lcl_8)
+                                    rbnf_tmp_1_ = lcl_7
+                                    lcl_7 = (True, rbnf_tmp_1_)
+                                    lcl_6 = lcl_7
+                                lcl_4 = lcl_6
+                            elif (lcl_5 == 0):
+                                lcl_6 = rbnf_named_parse_rule(builtin_state, builtin_tokens)
+                                rbnf_named__check_3 = lcl_6
+                                lcl_6 = rbnf_named__check_3[0]
+                                lcl_6 = (lcl_6 == False)
+                                if lcl_6:
+                                    lcl_6 = rbnf_named__check_3
+                                else:
+                                    lcl_7 = rbnf_named__check_3[1]
+                                    rbnf_tmp_3 = lcl_7
+                                    lcl_7 = rbnf_tmp_0.lineno
+                                    lcl_8 = rbnf_tmp_0.value
+                                    lcl_9 = rbnf_tmp_1.value
+                                    lcl_9 = unwrap(lcl_9)
+                                    lcl_8 = Prod(lcl_8, lcl_9, rbnf_tmp_2, rbnf_tmp_3)
+                                    lcl_7 = (lcl_7, lcl_8)
+                                    rbnf_tmp_1_ = lcl_7
+                                    lcl_7 = (True, rbnf_tmp_1_)
+                                    lcl_6 = lcl_7
+                                lcl_4 = lcl_6
+                            else:
+                                lcl_6 = rbnf_tmp_0.lineno
+                                lcl_7 = rbnf_tmp_0.value
+                                lcl_8 = rbnf_tmp_1.value
+                                lcl_8 = unwrap(lcl_8)
+                                lcl_7 = Decl(lcl_7, lcl_8, rbnf_tmp_2)
+                                lcl_6 = (lcl_6, lcl_7)
+                                rbnf_tmp_1_ = lcl_6
+                                lcl_6 = (True, rbnf_tmp_1_)
+                                lcl_4 = lcl_6
+                            lcl_3 = lcl_4
                         else:
-                            lcl_6 = rbnf_named__check_3[1]
-                            rbnf_tmp_3 = lcl_6
-                            lcl_6 = rbnf_tmp_0.lineno
-                            lcl_7 = rbnf_tmp_0.value
-                            lcl_8 = rbnf_tmp_1.value
-                            lcl_8 = unwrap(lcl_8)
-                            lcl_7 = Prod(lcl_7, lcl_8, rbnf_tmp_2, rbnf_tmp_3)
-                            lcl_6 = (lcl_6, lcl_7)
-                            rbnf_tmp_1_ = lcl_6
-                            lcl_6 = (True, rbnf_tmp_1_)
-                            lcl_5 = lcl_6
-                        lcl_4 = lcl_5
-                    lcl_3 = lcl_4
-                lcl_1 = lcl_3
+                            lcl_4 = (rbnf_named__off_2, 'singleprod got EOF')
+                            lcl_4 = builtin_cons(lcl_4, builtin_nil)
+                            lcl_4 = (False, lcl_4)
+                            lcl_3 = lcl_4
+                        lcl_11 = lcl_3
+                    lcl_10 = lcl_11
+                lcl_1 = lcl_10
             elif (lcl_2 == 0):
                 _rbnf_old_offset = builtin_tokens.offset
                 _rbnf_cur_token = builtin_tokens.array[_rbnf_old_offset]
                 builtin_tokens.offset = (_rbnf_old_offset + 1)
-                lcl_3 = _rbnf_cur_token
-                rbnf_tmp_0 = lcl_3
-                lcl_3 = rbnf_named_parse_type(builtin_state, builtin_tokens)
-                rbnf_named__check_1 = lcl_3
-                lcl_3 = rbnf_named__check_1[0]
-                lcl_3 = (lcl_3 == False)
-                if lcl_3:
-                    lcl_3 = rbnf_named__check_1
+                lcl_10 = _rbnf_cur_token
+                rbnf_tmp_0 = lcl_10
+                lcl_10 = rbnf_named_parse_type(builtin_state, builtin_tokens)
+                rbnf_named__check_1 = lcl_10
+                lcl_10 = rbnf_named__check_1[0]
+                lcl_10 = (lcl_10 == False)
+                if lcl_10:
+                    lcl_10 = rbnf_named__check_1
                 else:
-                    lcl_4 = rbnf_named__check_1[1]
-                    rbnf_tmp_1 = lcl_4
-                    lcl_4 = rbnf_named_parse_rule(builtin_state, builtin_tokens)
-                    rbnf_named__check_2 = lcl_4
-                    lcl_4 = rbnf_named__check_2[0]
-                    lcl_4 = (lcl_4 == False)
-                    if lcl_4:
-                        lcl_4 = rbnf_named__check_2
+                    lcl_11 = rbnf_named__check_1[1]
+                    rbnf_tmp_1 = lcl_11
+                    lcl_11 = builtin_tokens.offset
+                    rbnf_named__off_1 = lcl_11
+                    try:
+                        builtin_tokens.array[(builtin_tokens.offset + 0)]
+                        _rbnf_peek_tmp = True
+                    except IndexError:
+                        _rbnf_peek_tmp = False
+                    lcl_11 = _rbnf_peek_tmp
+                    if lcl_11:
+                        lcl_4 = builtin_tokens.array[(builtin_tokens.offset + 0)]
+                        lcl_4 = lcl_4.idint
+                        if (lcl_4 == 3):
+                            lcl_5 = rbnf_named_parse_rule(builtin_state, builtin_tokens)
+                            rbnf_named__check_2 = lcl_5
+                            lcl_5 = rbnf_named__check_2[0]
+                            lcl_5 = (lcl_5 == False)
+                            if lcl_5:
+                                lcl_5 = rbnf_named__check_2
+                            else:
+                                lcl_6 = rbnf_named__check_2[1]
+                                rbnf_tmp_2 = lcl_6
+                                lcl_6 = rbnf_tmp_0.lineno
+                                lcl_7 = rbnf_tmp_0.value
+                                lcl_7 = unwrap(lcl_7)
+                                lcl_7 = Prod(None, lcl_7, rbnf_tmp_1, rbnf_tmp_2)
+                                lcl_6 = (lcl_6, lcl_7)
+                                rbnf_tmp_1_ = lcl_6
+                                lcl_6 = (True, rbnf_tmp_1_)
+                                lcl_5 = lcl_6
+                            lcl_3 = lcl_5
+                        elif (lcl_4 == 4):
+                            lcl_5 = rbnf_named_parse_rule(builtin_state, builtin_tokens)
+                            rbnf_named__check_2 = lcl_5
+                            lcl_5 = rbnf_named__check_2[0]
+                            lcl_5 = (lcl_5 == False)
+                            if lcl_5:
+                                lcl_5 = rbnf_named__check_2
+                            else:
+                                lcl_6 = rbnf_named__check_2[1]
+                                rbnf_tmp_2 = lcl_6
+                                lcl_6 = rbnf_tmp_0.lineno
+                                lcl_7 = rbnf_tmp_0.value
+                                lcl_7 = unwrap(lcl_7)
+                                lcl_7 = Prod(None, lcl_7, rbnf_tmp_1, rbnf_tmp_2)
+                                lcl_6 = (lcl_6, lcl_7)
+                                rbnf_tmp_1_ = lcl_6
+                                lcl_6 = (True, rbnf_tmp_1_)
+                                lcl_5 = lcl_6
+                            lcl_3 = lcl_5
+                        elif (lcl_4 == 6):
+                            lcl_5 = rbnf_named_parse_rule(builtin_state, builtin_tokens)
+                            rbnf_named__check_2 = lcl_5
+                            lcl_5 = rbnf_named__check_2[0]
+                            lcl_5 = (lcl_5 == False)
+                            if lcl_5:
+                                lcl_5 = rbnf_named__check_2
+                            else:
+                                lcl_6 = rbnf_named__check_2[1]
+                                rbnf_tmp_2 = lcl_6
+                                lcl_6 = rbnf_tmp_0.lineno
+                                lcl_7 = rbnf_tmp_0.value
+                                lcl_7 = unwrap(lcl_7)
+                                lcl_7 = Prod(None, lcl_7, rbnf_tmp_1, rbnf_tmp_2)
+                                lcl_6 = (lcl_6, lcl_7)
+                                rbnf_tmp_1_ = lcl_6
+                                lcl_6 = (True, rbnf_tmp_1_)
+                                lcl_5 = lcl_6
+                            lcl_3 = lcl_5
+                        elif (lcl_4 == 5):
+                            lcl_5 = rbnf_named_parse_rule(builtin_state, builtin_tokens)
+                            rbnf_named__check_2 = lcl_5
+                            lcl_5 = rbnf_named__check_2[0]
+                            lcl_5 = (lcl_5 == False)
+                            if lcl_5:
+                                lcl_5 = rbnf_named__check_2
+                            else:
+                                lcl_6 = rbnf_named__check_2[1]
+                                rbnf_tmp_2 = lcl_6
+                                lcl_6 = rbnf_tmp_0.lineno
+                                lcl_7 = rbnf_tmp_0.value
+                                lcl_7 = unwrap(lcl_7)
+                                lcl_7 = Prod(None, lcl_7, rbnf_tmp_1, rbnf_tmp_2)
+                                lcl_6 = (lcl_6, lcl_7)
+                                rbnf_tmp_1_ = lcl_6
+                                lcl_6 = (True, rbnf_tmp_1_)
+                                lcl_5 = lcl_6
+                            lcl_3 = lcl_5
+                        elif (lcl_4 == 2):
+                            lcl_5 = rbnf_named_parse_rule(builtin_state, builtin_tokens)
+                            rbnf_named__check_2 = lcl_5
+                            lcl_5 = rbnf_named__check_2[0]
+                            lcl_5 = (lcl_5 == False)
+                            if lcl_5:
+                                lcl_5 = rbnf_named__check_2
+                            else:
+                                lcl_6 = rbnf_named__check_2[1]
+                                rbnf_tmp_2 = lcl_6
+                                lcl_6 = rbnf_tmp_0.lineno
+                                lcl_7 = rbnf_tmp_0.value
+                                lcl_7 = unwrap(lcl_7)
+                                lcl_7 = Prod(None, lcl_7, rbnf_tmp_1, rbnf_tmp_2)
+                                lcl_6 = (lcl_6, lcl_7)
+                                rbnf_tmp_1_ = lcl_6
+                                lcl_6 = (True, rbnf_tmp_1_)
+                                lcl_5 = lcl_6
+                            lcl_3 = lcl_5
+                        elif (lcl_4 == 1):
+                            lcl_5 = rbnf_named_parse_rule(builtin_state, builtin_tokens)
+                            rbnf_named__check_2 = lcl_5
+                            lcl_5 = rbnf_named__check_2[0]
+                            lcl_5 = (lcl_5 == False)
+                            if lcl_5:
+                                lcl_5 = rbnf_named__check_2
+                            else:
+                                lcl_6 = rbnf_named__check_2[1]
+                                rbnf_tmp_2 = lcl_6
+                                lcl_6 = rbnf_tmp_0.lineno
+                                lcl_7 = rbnf_tmp_0.value
+                                lcl_7 = unwrap(lcl_7)
+                                lcl_7 = Prod(None, lcl_7, rbnf_tmp_1, rbnf_tmp_2)
+                                lcl_6 = (lcl_6, lcl_7)
+                                rbnf_tmp_1_ = lcl_6
+                                lcl_6 = (True, rbnf_tmp_1_)
+                                lcl_5 = lcl_6
+                            lcl_3 = lcl_5
+                        elif (lcl_4 == 0):
+                            lcl_5 = rbnf_named_parse_rule(builtin_state, builtin_tokens)
+                            rbnf_named__check_2 = lcl_5
+                            lcl_5 = rbnf_named__check_2[0]
+                            lcl_5 = (lcl_5 == False)
+                            if lcl_5:
+                                lcl_5 = rbnf_named__check_2
+                            else:
+                                lcl_6 = rbnf_named__check_2[1]
+                                rbnf_tmp_2 = lcl_6
+                                lcl_6 = rbnf_tmp_0.lineno
+                                lcl_7 = rbnf_tmp_0.value
+                                lcl_7 = unwrap(lcl_7)
+                                lcl_7 = Prod(None, lcl_7, rbnf_tmp_1, rbnf_tmp_2)
+                                lcl_6 = (lcl_6, lcl_7)
+                                rbnf_tmp_1_ = lcl_6
+                                lcl_6 = (True, rbnf_tmp_1_)
+                                lcl_5 = lcl_6
+                            lcl_3 = lcl_5
+                        else:
+                            lcl_5 = rbnf_tmp_0.lineno
+                            lcl_6 = rbnf_tmp_0.value
+                            lcl_6 = unwrap(lcl_6)
+                            lcl_6 = Decl(None, lcl_6, rbnf_tmp_1)
+                            lcl_5 = (lcl_5, lcl_6)
+                            rbnf_tmp_1_ = lcl_5
+                            lcl_5 = (True, rbnf_tmp_1_)
+                            lcl_3 = lcl_5
+                        lcl_11 = lcl_3
                     else:
-                        lcl_5 = rbnf_named__check_2[1]
-                        rbnf_tmp_2 = lcl_5
-                        lcl_5 = rbnf_tmp_0.lineno
-                        lcl_6 = rbnf_tmp_0.value
-                        lcl_6 = unwrap(lcl_6)
-                        lcl_6 = Prod(None, lcl_6, rbnf_tmp_1, rbnf_tmp_2)
-                        lcl_5 = (lcl_5, lcl_6)
-                        rbnf_tmp_1_ = lcl_5
-                        lcl_5 = (True, rbnf_tmp_1_)
-                        lcl_4 = lcl_5
-                    lcl_3 = lcl_4
-                lcl_1 = lcl_3
+                        lcl_3 = (rbnf_named__off_1, 'singleprod got EOF')
+                        lcl_3 = builtin_cons(lcl_3, builtin_nil)
+                        lcl_3 = (False, lcl_3)
+                        lcl_11 = lcl_3
+                    lcl_10 = lcl_11
+                lcl_1 = lcl_10
             else:
-                lcl_3 = (rbnf_named__off_0, 'singleprod lookahead failed')
-                lcl_3 = builtin_cons(lcl_3, builtin_nil)
-                lcl_3 = (False, lcl_3)
-                lcl_1 = lcl_3
+                lcl_10 = (rbnf_named__off_0, 'singleprod lookahead failed')
+                lcl_10 = builtin_cons(lcl_10, builtin_nil)
+                lcl_10 = (False, lcl_10)
+                lcl_1 = lcl_10
             lcl_0 = lcl_1
         else:
             lcl_1 = (rbnf_named__off_0, 'singleprod got EOF')
@@ -1025,28 +1482,41 @@ def mk_parser():
                         builtin_tokens.offset = (_rbnf_old_offset + 1)
                         lcl_6 = _rbnf_cur_token
                         rbnf_tmp_1 = lcl_6
+                        lcl_6 = builtin_tokens.offset
+                        rbnf_named__off_2 = lcl_6
                         try:
-                            _rbnf_cur_token = builtin_tokens.array[builtin_tokens.offset]
-                            if (_rbnf_cur_token.idint is 4):
-                                builtin_tokens.offset += 1
-                            else:
-                                _rbnf_cur_token = None
+                            builtin_tokens.array[(builtin_tokens.offset + 0)]
+                            _rbnf_peek_tmp = True
                         except IndexError:
-                            _rbnf_cur_token = None
-                        lcl_6 = _rbnf_cur_token
-                        rbnf_tmp_2 = lcl_6
-                        lcl_6 = (rbnf_tmp_2 is None)
+                            _rbnf_peek_tmp = False
+                        lcl_6 = _rbnf_peek_tmp
                         if lcl_6:
-                            lcl_7 = builtin_tokens.offset
-                            lcl_7 = (lcl_7, 'quote = not match')
-                            lcl_7 = builtin_cons(lcl_7, builtin_nil)
-                            lcl_7 = (False, lcl_7)
+                            lcl_8 = builtin_tokens.array[(builtin_tokens.offset + 0)]
+                            lcl_8 = lcl_8.idint
+                            if (lcl_8 == 4):
+                                _rbnf_old_offset = builtin_tokens.offset
+                                _rbnf_cur_token = builtin_tokens.array[_rbnf_old_offset]
+                                builtin_tokens.offset = (_rbnf_old_offset + 1)
+                                lcl_9 = _rbnf_cur_token
+                                rbnf_tmp_2 = lcl_9
+                                lcl_9 = rbnf_tmp_1.value
+                                lcl_9 = unwrap(lcl_9)
+                                rbnf_tmp_1_ = lcl_9
+                                lcl_9 = (True, rbnf_tmp_1_)
+                                lcl_7 = lcl_9
+                            else:
+                                lcl_9 = ()
+                                rbnf_tmp_1_ = lcl_9
+                                lcl_9 = rbnf_tmp_1.value
+                                lcl_9 = unwrap(lcl_9)
+                                rbnf_tmp_2_ = lcl_9
+                                lcl_9 = (True, rbnf_tmp_2_)
+                                lcl_7 = lcl_9
                             lcl_6 = lcl_7
                         else:
-                            lcl_7 = rbnf_tmp_1.value
-                            lcl_7 = unwrap(lcl_7)
-                            rbnf_tmp_1_ = lcl_7
-                            lcl_7 = (True, rbnf_tmp_1_)
+                            lcl_7 = (rbnf_named__off_2, 'type got EOF')
+                            lcl_7 = builtin_cons(lcl_7, builtin_nil)
+                            lcl_7 = (False, lcl_7)
                             lcl_6 = lcl_7
                         lcl_4 = lcl_6
                     elif (lcl_5 == 1):
@@ -1055,27 +1525,39 @@ def mk_parser():
                         builtin_tokens.offset = (_rbnf_old_offset + 1)
                         lcl_6 = _rbnf_cur_token
                         rbnf_tmp_1 = lcl_6
+                        lcl_6 = builtin_tokens.offset
+                        rbnf_named__off_2 = lcl_6
                         try:
-                            _rbnf_cur_token = builtin_tokens.array[builtin_tokens.offset]
-                            if (_rbnf_cur_token.idint is 4):
-                                builtin_tokens.offset += 1
-                            else:
-                                _rbnf_cur_token = None
+                            builtin_tokens.array[(builtin_tokens.offset + 0)]
+                            _rbnf_peek_tmp = True
                         except IndexError:
-                            _rbnf_cur_token = None
-                        lcl_6 = _rbnf_cur_token
-                        rbnf_tmp_2 = lcl_6
-                        lcl_6 = (rbnf_tmp_2 is None)
+                            _rbnf_peek_tmp = False
+                        lcl_6 = _rbnf_peek_tmp
                         if lcl_6:
-                            lcl_7 = builtin_tokens.offset
-                            lcl_7 = (lcl_7, 'quote = not match')
-                            lcl_7 = builtin_cons(lcl_7, builtin_nil)
-                            lcl_7 = (False, lcl_7)
+                            lcl_8 = builtin_tokens.array[(builtin_tokens.offset + 0)]
+                            lcl_8 = lcl_8.idint
+                            if (lcl_8 == 4):
+                                _rbnf_old_offset = builtin_tokens.offset
+                                _rbnf_cur_token = builtin_tokens.array[_rbnf_old_offset]
+                                builtin_tokens.offset = (_rbnf_old_offset + 1)
+                                lcl_9 = _rbnf_cur_token
+                                rbnf_tmp_2 = lcl_9
+                                lcl_9 = rbnf_tmp_1.value
+                                rbnf_tmp_1_ = lcl_9
+                                lcl_9 = (True, rbnf_tmp_1_)
+                                lcl_7 = lcl_9
+                            else:
+                                lcl_9 = ()
+                                rbnf_tmp_1_ = lcl_9
+                                lcl_9 = rbnf_tmp_1.value
+                                rbnf_tmp_2_ = lcl_9
+                                lcl_9 = (True, rbnf_tmp_2_)
+                                lcl_7 = lcl_9
                             lcl_6 = lcl_7
                         else:
-                            lcl_7 = rbnf_tmp_1.value
-                            rbnf_tmp_1_ = lcl_7
-                            lcl_7 = (True, rbnf_tmp_1_)
+                            lcl_7 = (rbnf_named__off_2, 'type got EOF')
+                            lcl_7 = builtin_cons(lcl_7, builtin_nil)
+                            lcl_7 = (False, lcl_7)
                             lcl_6 = lcl_7
                         lcl_4 = lcl_6
                     elif (lcl_5 == 0):
@@ -1084,28 +1566,41 @@ def mk_parser():
                         builtin_tokens.offset = (_rbnf_old_offset + 1)
                         lcl_6 = _rbnf_cur_token
                         rbnf_tmp_1 = lcl_6
+                        lcl_6 = builtin_tokens.offset
+                        rbnf_named__off_2 = lcl_6
                         try:
-                            _rbnf_cur_token = builtin_tokens.array[builtin_tokens.offset]
-                            if (_rbnf_cur_token.idint is 4):
-                                builtin_tokens.offset += 1
-                            else:
-                                _rbnf_cur_token = None
+                            builtin_tokens.array[(builtin_tokens.offset + 0)]
+                            _rbnf_peek_tmp = True
                         except IndexError:
-                            _rbnf_cur_token = None
-                        lcl_6 = _rbnf_cur_token
-                        rbnf_tmp_2 = lcl_6
-                        lcl_6 = (rbnf_tmp_2 is None)
+                            _rbnf_peek_tmp = False
+                        lcl_6 = _rbnf_peek_tmp
                         if lcl_6:
-                            lcl_7 = builtin_tokens.offset
-                            lcl_7 = (lcl_7, 'quote = not match')
-                            lcl_7 = builtin_cons(lcl_7, builtin_nil)
-                            lcl_7 = (False, lcl_7)
+                            lcl_8 = builtin_tokens.array[(builtin_tokens.offset + 0)]
+                            lcl_8 = lcl_8.idint
+                            if (lcl_8 == 4):
+                                _rbnf_old_offset = builtin_tokens.offset
+                                _rbnf_cur_token = builtin_tokens.array[_rbnf_old_offset]
+                                builtin_tokens.offset = (_rbnf_old_offset + 1)
+                                lcl_9 = _rbnf_cur_token
+                                rbnf_tmp_2 = lcl_9
+                                lcl_9 = rbnf_tmp_1.value
+                                lcl_9 = unwrap(lcl_9)
+                                rbnf_tmp_1_ = lcl_9
+                                lcl_9 = (True, rbnf_tmp_1_)
+                                lcl_7 = lcl_9
+                            else:
+                                lcl_9 = ()
+                                rbnf_tmp_1_ = lcl_9
+                                lcl_9 = rbnf_tmp_1.value
+                                lcl_9 = unwrap(lcl_9)
+                                rbnf_tmp_2_ = lcl_9
+                                lcl_9 = (True, rbnf_tmp_2_)
+                                lcl_7 = lcl_9
                             lcl_6 = lcl_7
                         else:
-                            lcl_7 = rbnf_tmp_1.value
-                            lcl_7 = unwrap(lcl_7)
-                            rbnf_tmp_1_ = lcl_7
-                            lcl_7 = (True, rbnf_tmp_1_)
+                            lcl_7 = (rbnf_named__off_2, 'type got EOF')
+                            lcl_7 = builtin_cons(lcl_7, builtin_nil)
+                            lcl_7 = (False, lcl_7)
                             lcl_6 = lcl_7
                         lcl_4 = lcl_6
                     else:
