@@ -180,6 +180,8 @@ def to_backnaur(print, x):
                print(macro_apply(SPACE))
                to_backnaur(print, e)
           
+          print(macro_apply(SPACE))
+
           print(' & ')
           if x.label:
                print(macro_apply(LABEL, x.label))

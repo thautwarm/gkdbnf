@@ -1,4 +1,4 @@
-def bnf(src, *, self, tex_print, opts = "llllllr"):
+def bnf(src, *, self, tex_print, opts = "llllrlr"):
     import gkdtex.developer_utilities as dev
     from gkdbnf.wrap import parse
     if not isinstance(opts, str):
@@ -19,10 +19,10 @@ class GkdInterface:
 \newcommand{\bnfdef}{::=}
 \newcommand{\bnfistypeof}{$\in$}
 \newcommand{\bnftype}[1]{$\mathtt{#1}$}
-\newcommand{\bnfalt}{$\mathrm{|\;}$}
+\newcommand{\bnfalt}{$\mid \;$}
 \newcommand{\bnfnonterm}[1]{$\mathit{#1}$}
 \newcommand{\bnfterm}[1]{$\mathrm{#1}$}
-\newcommand{\bnfspace}{}
+\newcommand{\bnfspace}{$\;$}
 \newcommand{\bnfdescr}[1]{ #1  }
 \newcommand{\bnflabel}[1]{ #1 }
         """)

@@ -123,7 +123,6 @@ def to_backnaur(print, x):
      if isinstance(x, NonTerm):
           return print(macro_apply(NT,  x.v))
      if isinstance(x, Or):
-          print(macro_apply(SPACE))
           print(macro_apply(OR))
      if isinstance(x, More):
           # desc
